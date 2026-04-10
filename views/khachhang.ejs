@@ -1,0 +1,86 @@
+<%- include('navbar') %>
+
+<div class="table-wrapper mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h5 class="fw-bold mb-0 text-secondary"><i class="fa-solid fa-users me-2"></i>Danh sách Khách hàng</h5>
+        <button class="btn btn-primary rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#addCustomerModal">
+            <i class="fa-solid fa-plus me-1"></i> Thêm Khách Hàng
+        </button>
+    </div>
+    
+    <div class="table-responsive">
+        <table class="table table-hover align-middle border">
+            <thead class="table-light">
+                <tr>
+                    <th width="5%">STT</th>
+                    <th>Họ Tên</th>
+                    <th>Số điện thoại</th>
+                    <th>Email</th>
+                    <th>Địa chỉ</th>
+                    <th class="text-center">Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% var stt = 1; %>
+                <% khachhangs.forEach(kh => { %>
+                    <tr>
+                        <td class="text-center"><%= stt++ %></td>
+                        <td class="fw-bold text-primary"><%= kh.HoTen %></td>
+                        <td><%= kh.SoDienThoai %></td>
+                        <td><%= kh.Email || '---' %></td>
+                        <td><%= kh.DiaChi || '---' %></td>
+                        <td class="text-center">
+                            <a href="/khachhang/sua/<%= kh._id %>" class="btn btn-sm btn-outline-info action-btn"><i class="fa-solid fa-pen"></i></a>
+                            <a href="/khachhang/xoa/<%= kh._id %>" class="btn btn-sm btn-outline-danger action-btn" onclick="return confirm('Bạn có chắc muốn xóa khách hàng này?');"><i class="fa-solid fa-trash"></i></a>
+                        </td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal fade" id="addCustomerModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header bg-primary text-white border-0">
+                <h5 class="modal-title fw-bold">Thêm Khách Hàng</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="/khachhang/them" method="POST">
+                <div class="modal-body p-4 row g-3">
+                    <div class="col-12">
+                        <label class="form-label">Họ và tên</label>
+                        <input type="text" class="form-control" name="HoTen" required>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Số điện thoại</label>
+                        <input type="text" class="form-control" name="SoDienThoai" required>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control" name="Email">
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Địa chỉ</label>
+                        <input type="text" class="form-control" name="DiaChi">
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Ghi chú thêm</label>
+                        <textarea class="form-control" name="GhiChu" rows="2"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light border-0">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-primary">Lưu Khách Hàng</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<%- include('footer') %>
+</div>
+<%- include('javascript') %>
+</body>
+</html>

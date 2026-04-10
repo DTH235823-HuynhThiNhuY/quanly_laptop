@@ -1,0 +1,62 @@
+<%- include('navbar') %>
+
+<div class="table-wrapper mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h5 class="fw-bold mb-0 text-secondary"><i class="fa-solid fa-tags me-2"></i>Danh sách Hãng Sản Xuất</h5>
+        <button class="btn btn-primary rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#addBrandModal">
+            <i class="fa-solid fa-plus me-1"></i> Thêm Hãng Mới
+        </button>
+    </div>
+    
+    <div class="table-responsive">
+        <table class="table table-hover align-middle border">
+            <thead class="table-light">
+                <tr>
+                    <th width="10%" class="text-center">STT</th>
+                    <th>Tên Hãng</th>
+                    <th width="20%" class="text-center">Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% var stt = 1; %>
+                <% danhmuc.forEach(dm => { %>
+                    <tr>
+                        <td class="text-center"><%= stt++ %></td>
+                        <td class="fw-bold text-primary"><%= dm.TenDanhMuc %></td>
+                        <td class="text-center">
+                            <a href="/danhmuc/sua/<%= dm._id %>" class="btn btn-sm btn-outline-info action-btn"><i class="fa-solid fa-pen"></i></a>
+                            <a href="/danhmuc/xoa/<%= dm._id %>" class="btn btn-sm btn-outline-danger action-btn" onclick="return confirm('Bạn có chắc muốn xóa hãng này? (Sẽ gây lỗi nếu hãng này đang có laptop!)');"><i class="fa-solid fa-trash"></i></a>
+                        </td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal fade" id="addBrandModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header bg-primary text-white border-0">
+                <h5 class="modal-title fw-bold"><i class="fa-solid fa-plus me-2"></i>Thêm Hãng Mới</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="/danhmuc/them" method="POST">
+                <div class="modal-body p-4">
+                    <label class="form-label fw-semibold text-muted">Tên hãng (Ví dụ: Apple, Asus...)</label>
+                    <input type="text" class="form-control bg-light" name="TenDanhMuc" required autofocus>
+                </div>
+                <div class="modal-footer border-0 bg-light">
+                    <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-primary px-4">Lưu hãng</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<%- include('footer') %>
+</div>
+<%- include('javascript') %>
+</body>
+</html>

@@ -1,0 +1,47 @@
+[
+  {
+    "TenLaptop": "Asus ROG Strix G15",
+    "DanhMuc": { "$oid": "69d1d2d526748dd218451ee7" },
+    "GiaNhap": 22000000,
+    "GiaBan": 25990000,
+    "SoLuong": 15,
+    "CauHinh": "Ryzen 7 6800H, 16GB RAM, 512GB SSD, RTX 3050",
+    "HinhAnh": "/AnhLapTop/ASus/anh1.jpg"
+  },
+  {
+    "TenLaptop": "Asus ROG Zephyrus G14 White",
+    "DanhMuc": { "$oid": "69d1d2d526748dd218451ee7" },
+    "GiaNhap": 35000000,
+    "GiaBan": 39990000,
+    "SoLuong": 8,
+    "CauHinh": "Ryzen 9 7940HS, 16GB RAM, 1TB SSD, RTX 4060",
+    "HinhAnh": "/AnhLapTop/ASus/anh2.jpg"
+  },
+  {
+    "TenLaptop": "Asus Zenbook 14 OLED",
+    "DanhMuc": { "$oid": "69d1d2d526748dd218451ee7" },
+    "GiaNhap": 18000000,
+    "GiaBan": 21490000,
+    "SoLuong": 20,
+    "CauHinh": "Core i5-1340P, 16GB RAM, 512GB SSD, Iris Xe",
+    "HinhAnh": "/AnhLapTop/ASus/anh3.jpg"
+  },
+  {
+    "TenLaptop": "Asus TUF Gaming F15",
+    "DanhMuc": { "$oid": "69d1d2d526748dd218451ee7" },
+    "GiaNhap": 20000000,
+    "GiaBan": 23500000,
+    "SoLuong": 30,
+    "CauHinh": "Core i7-12700H, 16GB RAM, 512GB SSD, RTX 4050",
+    "HinhAnh": "/AnhLapTop/ASus/anh4.jpg"
+  },
+  {
+    "TenLaptop": "Asus TUF Gaming A15",
+    "DanhMuc": { "$oid": "69d1d2d526748dd218451ee7" },
+    "GiaNhap": 15000000,
+    "GiaBan": 17500000,
+    "SoLuong": 0,
+    "CauHinh": "Ryzen 5 7535HS, 8GB RAM, 512GB SSD, RTX 2050",
+    "HinhAnh": "/AnhLapTop/ASus/anh5.jpg"
+  }
+]

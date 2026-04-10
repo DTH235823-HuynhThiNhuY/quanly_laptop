@@ -1,0 +1,47 @@
+[
+  {
+    "TenLaptop": "HP EliteBook 840 G9",
+    "DanhMuc": { "$oid": "69d1d2d526748dd218451ee9" },
+    "GiaNhap": 25000000,
+    "GiaBan": 28990000,
+    "SoLuong": 15,
+    "CauHinh": "Core i7-1260P, 16GB RAM, 512GB SSD, Windows 11 Pro",
+    "HinhAnh": "/AnhLapTop/HP/anh1.jpg"
+  },
+  {
+    "TenLaptop": "HP OMEN 16 Gaming",
+    "DanhMuc": { "$oid": "69d1d2d526748dd218451ee9" },
+    "GiaNhap": 36000000,
+    "GiaBan": 40990000,
+    "SoLuong": 8,
+    "CauHinh": "Core i7-13700HX, 32GB RAM, 1TB SSD, RTX 4070",
+    "HinhAnh": "/AnhLapTop/HP/anh2.jpg"
+  },
+  {
+    "TenLaptop": "HP Pavilion 15",
+    "DanhMuc": { "$oid": "69d1d2d526748dd218451ee9" },
+    "GiaNhap": 14000000,
+    "GiaBan": 16500000,
+    "SoLuong": 20,
+    "CauHinh": "Core i5-1240P, 8GB RAM, 512GB SSD, Iris Xe",
+    "HinhAnh": "/AnhLapTop/HP/anh3.jpg"
+  },
+  {
+    "TenLaptop": "HP Envy x360 2-in-1",
+    "DanhMuc": { "$oid": "69d1d2d526748dd218451ee9" },
+    "GiaNhap": 21000000,
+    "GiaBan": 24500000,
+    "SoLuong": 12,
+    "CauHinh": "Ryzen 7 7730U, 16GB RAM, 512GB SSD, Màn cảm ứng xoay gập",
+    "HinhAnh": "/AnhLapTop/HP/anh4.jpg"
+  },
+  {
+    "TenLaptop": "HP Victus 15 Gaming",
+    "DanhMuc": { "$oid": "69d1d2d526748dd218451ee9" },
+    "GiaNhap": 18000000,
+    "GiaBan": 20990000,
+    "SoLuong": 10,
+    "CauHinh": "Core i5-12500H, 16GB RAM, 512GB SSD, RTX 3050",
+    "HinhAnh": "/AnhLapTop/HP/anh5.jpg"
+  }
+]

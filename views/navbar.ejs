@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ Thống Quản Lý Laptop</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f4f7f6;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .sidebar {
+            height: 100vh;
+            background: #2c3e50;
+            color: #fff;
+            position: fixed;
+            width: 250px;
+            transition: all 0.3s;
+        }
+
+        .sidebar a {
+            color: #aeb2b7;
+            text-decoration: none;
+            padding: 15px 20px;
+            display: block;
+            transition: 0.3s;
+        }
+
+        .sidebar a:hover,
+        .sidebar a.active {
+            background: #1a252f;
+            color: #fff;
+            border-left: 4px solid #3498db;
+        }
+
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+
+        .card-stat {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s;
+        }
+
+        .card-stat:hover {
+            transform: translateY(-5px);
+        }
+
+        .table-wrapper {
+            background: #fff;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .table th {
+            border-top: none;
+            color: #7a838b;
+            font-weight: 600;
+        }
+
+        .table td {
+            vertical-align: middle;
+        }
+
+        .action-btn {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 5px;
+        }
+
+        .product-img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="sidebar d-flex flex-column">
+        <h4 class="text-center py-4 mb-0 fw-bold border-bottom border-secondary">
+            <i class="fa-solid fa-laptop-code me-2 text-info"></i>LaptopPro
+        </h4>
+        <div class="flex-grow-1 mt-3">
+            <a href="/laptop"><i class="fa-solid fa-laptop me-2"></i> Sản phẩm</a>
+            <a href="/danhmuc"><i class="fa-solid fa-tags me-2"></i> Hãng sản xuất</a>
+            <a href="/donhang"><i class="fa-solid fa-cart-shopping me-2"></i> Đơn hàng</a>
+            <a href="/khachhang"><i class="fa-solid fa-users me-2"></i> Khách hàng</a>
+            <a href="/thongke"><i class="fa-solid fa-chart-line me-2"></i> Thống kê</a>
+        </div>
+        <div class="mt-auto border-top border-secondary">
+            <% if(user) { %>
+                <a href="/dangxuat" class="text-danger"><i class="fa-solid fa-right-from-bracket me-2"></i> Đăng
+                    xuất</a>
+                <% } else { %>
+                    <a href="/dangnhap" class="text-success"><i class="fa-solid fa-right-to-bracket me-2"></i> Đăng
+                        nhập</a>
+                    <% } %>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <nav class="navbar navbar-expand-lg navbar-light bg-white rounded-pill px-4 mb-4 shadow-sm">
+            <div class="container-fluid">
+                <span class="navbar-brand mb-0 h1 fw-bold text-secondary"><%= title %></span>
+                <div class="d-flex align-items-center">
+                    <form action="/laptop" method="GET" class="input-group me-3" style="width: 250px;">
+                        <input type="text" name="q" class="form-control rounded-pill bg-light border-0 pe-5"
+                            placeholder="Tìm kiếm laptop..." 
+                            value="<%= typeof keyword !== 'undefined' ? keyword : '' %>">
+                        <button class="btn border-0 position-absolute end-0 z-3 rounded-pill" type="submit">
+                            <i class="fa-solid fa-search text-muted"></i>
+                        </button>
+                    </form>
+                    <div class="d-flex align-items-center">
+                        <% if(user) { %>
+                            <span class="me-3 fw-bold text-secondary">Chào, <%= user.HoVaTen %></span>
+                            <img src="https://ui-avatars.com/api/?name=<%= user.HoVaTen %>&background=0D8ABC&color=fff"
+                                alt="Admin" class="rounded-circle shadow-sm" width="40">
+                            <% } else { %>
+                                <a href="/dangnhap" class="btn btn-outline-primary rounded-pill btn-sm px-3">Đăng
+                                    nhập</a>
+                                <% } %>
+                    </div>
+                </div>
+            </div>
+        </nav>

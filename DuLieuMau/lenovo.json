@@ -1,0 +1,47 @@
+[
+  {
+    "TenLaptop": "Lenovo Legion Slim 5",
+    "DanhMuc": { "$oid": "69d1d2d526748dd218451eea" },
+    "GiaNhap": 28000000,
+    "GiaBan": 32990000,
+    "SoLuong": 15,
+    "CauHinh": "Ryzen 7 7840HS, 16GB RAM, 512GB SSD, RTX 4060",
+    "HinhAnh": "/AnhLapTop/Lenovo/anh1.jpg"
+  },
+  {
+    "TenLaptop": "Lenovo Legion Pro 5i (Glacier White)",
+    "DanhMuc": { "$oid": "69d1d2d526748dd218451eea" },
+    "GiaNhap": 35000000,
+    "GiaBan": 39990000,
+    "SoLuong": 8,
+    "CauHinh": "Core i7-13700HX, 32GB RAM, 1TB SSD, RTX 4070",
+    "HinhAnh": "/AnhLapTop/Lenovo/anh2.jpg"
+  },
+  {
+    "TenLaptop": "Lenovo Legion Pro 7",
+    "DanhMuc": { "$oid": "69d1d2d526748dd218451eea" },
+    "GiaNhap": 45000000,
+    "GiaBan": 52990000,
+    "SoLuong": 5,
+    "CauHinh": "Ryzen 9 7945HX, 32GB RAM, 1TB SSD, RTX 4080",
+    "HinhAnh": "/AnhLapTop/Lenovo/anh3.jpg"
+  },
+  {
+    "TenLaptop": "Lenovo LOQ 15",
+    "DanhMuc": { "$oid": "69d1d2d526748dd218451eea" },
+    "GiaNhap": 18000000,
+    "GiaBan": 21500000,
+    "SoLuong": 20,
+    "CauHinh": "Core i5-13420H, 16GB RAM, 512GB SSD, RTX 3050",
+    "HinhAnh": "/AnhLapTop/Lenovo/anh4.jpg"
+  },
+  {
+    "TenLaptop": "Lenovo ThinkPad X1 Carbon Gen 12",
+    "DanhMuc": { "$oid": "69d1d2d526748dd218451eea" },
+    "GiaNhap": 38000000,
+    "GiaBan": 43990000,
+    "SoLuong": 10,
+    "CauHinh": "Core Ultra 7 155H, 32GB RAM, 1TB SSD, OLED 2.8K",
+    "HinhAnh": "/AnhLapTop/Lenovo/anh5.jpg"
+  }
+]

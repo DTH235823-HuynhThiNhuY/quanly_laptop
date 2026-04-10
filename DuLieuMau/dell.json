@@ -1,0 +1,47 @@
+[
+  {
+    "TenLaptop": "Dell Inspiron 14 2-in-1",
+    "DanhMuc": { "$oid": "69d1d2d526748dd218451ee8" },
+    "GiaNhap": 16000000,
+    "GiaBan": 18990000,
+    "SoLuong": 10,
+    "CauHinh": "Core i5-1335U, 8GB RAM, 512GB SSD, Cảm ứng xoay gập",
+    "HinhAnh": "/AnhLapTop/Dell/anh1.jpg"
+  },
+  {
+    "TenLaptop": "Dell Precision 5570 Workstation",
+    "DanhMuc": { "$oid": "69d1d2d526748dd218451ee8" },
+    "GiaNhap": 45000000,
+    "GiaBan": 51000000,
+    "SoLuong": 5,
+    "CauHinh": "Core i7-12800H, 32GB RAM, 1TB SSD, RTX A1000",
+    "HinhAnh": "/AnhLapTop/Dell/anh2.jpg"
+  },
+  {
+    "TenLaptop": "Dell Vostro 3520",
+    "DanhMuc": { "$oid": "69d1d2d526748dd218451ee8" },
+    "GiaNhap": 11000000,
+    "GiaBan": 13490000,
+    "SoLuong": 25,
+    "CauHinh": "Core i3-1215U, 8GB RAM, 256GB SSD, Màn 120Hz",
+    "HinhAnh": "/AnhLapTop/Dell/anh3.jpg"
+  },
+  {
+    "TenLaptop": "Dell Latitude 7440",
+    "DanhMuc": { "$oid": "69d1d2d526748dd218451ee8" },
+    "GiaNhap": 25000000,
+    "GiaBan": 28500000,
+    "SoLuong": 12,
+    "CauHinh": "Core i7-1355U, 16GB RAM, 512GB SSD, Vỏ Nhôm",
+    "HinhAnh": "/AnhLapTop/Dell/anh4.jpg"
+  },
+  {
+    "TenLaptop": "Dell XPS 13 Plus",
+    "DanhMuc": { "$oid": "69d1d2d526748dd218451ee8" },
+    "GiaNhap": 38000000,
+    "GiaBan": 42990000,
+    "SoLuong": 3,
+    "CauHinh": "Core i7-1360P, 16GB RAM, 512GB SSD, Màn OLED 3.5K",
+    "HinhAnh": "/AnhLapTop/Dell/anh5.jpg"
+  }
+]
