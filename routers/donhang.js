@@ -41,55 +41,56 @@ router.post('/them', async (req, res) => {
     }
 });
 
-// GET: Giao diện sửa trạng thái đơn hàng
-// POST: Giao diện sửa trạng thái / số lượng đơn hàng
+// POST: Bản Debug Tối Thượng (Tìm lỗi trong 1 nốt nhạc)
 router.post('/sua/:id', async (req, res) => {
     try {
-        console.log("DỮ LIỆU TỪ FORM SỬA GỬI LÊN:", req.body);
-        // -------------------------
+        console.log("\n========== BẮT ĐẦU SỬA ĐƠN HÀNG ==========");
+        console.log("1. Dữ liệu từ Form gửi lên (req.body):", req.body);
 
         var id = req.params.id;
-
-        // 1. Tìm đơn hàng cũ
         var oldOrder = await DonHang.findById(id);
-        if (!oldOrder) return res.send("Không tìm thấy đơn hàng!");
 
-        // 2. Lấy dữ liệu mới (Nếu form không có SoLuong thì lấy lại số lượng cũ để không bị lỗi)
+        if (!oldOrder) {
+            console.log("❌ LỖI: Không tìm thấy đơn hàng trong DB!");
+            return res.send("Không tìm thấy đơn hàng!");
+        }
+
+        // Đảm bảo lấy đúng ID Laptop (phòng trường hợp nó là Object)
+        var laptopId = oldOrder.Laptop._id || oldOrder.Laptop;
+        console.log("2. ID Laptop cần cập nhật kho:", laptopId);
+
+        // Lấy dữ liệu (Nếu form không gửi lên thì lấy dữ liệu cũ)
         var newQty = req.body.SoLuong ? parseInt(req.body.SoLuong) : oldOrder.SoLuong;
-        var newStatus = req.body.TrangThai || oldOrder.TrangThai;
+        var newStatus = req.body.TrangThai ? req.body.TrangThai : oldOrder.TrangThai;
 
-        // 3. TÍNH TOÁN LOGIC KHO (CẬP NHẬT CHỐNG LỖI TIẾNG VIỆT)
-        // Chuyển trạng thái về chữ thường để dễ so sánh
+        console.log(`3. Trạng thái: Cũ [${oldOrder.TrangThai}] -> Mới [${newStatus}]`);
+        console.log(`4. Số lượng: Cũ [${oldOrder.SoLuong}] -> Mới [${newQty}]`);
+
+        // TÍNH TOÁN LOGIC
         var oldStatusStr = oldOrder.TrangThai.toLowerCase();
         var newStatusStr = newStatus.toLowerCase();
 
-        // Kiểm tra xem trạng thái có chứa từ "hủy" hoặc "huỷ" không
         var isOldCancelled = oldStatusStr.includes('hủy') || oldStatusStr.includes('huỷ');
         var isNewCancelled = newStatusStr.includes('hủy') || newStatusStr.includes('huỷ');
 
-        // Nếu đơn cũ đã hủy -> Số lượng thực tế đã lấy khỏi kho là 0
         var oldEffectiveQty = isOldCancelled ? 0 : oldOrder.SoLuong;
-        
-        // Nếu đơn mới là hủy -> Số lượng thực tế cần lấy khỏi kho là 0
         var newEffectiveQty = isNewCancelled ? 0 : newQty;
 
-        // Tính độ chênh lệch
         var diff = newEffectiveQty - oldEffectiveQty;
+        console.log("5. Mức chênh lệch (diff):", diff, diff > 0 ? "(Cần TRỪ kho)" : diff < 0 ? "(Cần CỘNG kho)" : "(KHÔNG ĐỔI)");
 
-        // --- BỘ QUÉT LỖI (BẠN HÃY XEM Ở TERMINAL) ---
-        console.log("Trạng thái cũ:", oldOrder.TrangThai, "-> Tính ra số lượng:", oldEffectiveQty);
-        console.log("Trạng thái mới:", newStatus, "-> Tính ra số lượng:", newEffectiveQty);
-        console.log("Mức chênh lệch (Cần trừ kho):", diff);
-        // --------------------------------------------
-
-        // Cập nhật kho nếu có sự chênh lệch
+        // TIẾN HÀNH TRỪ/CỘNG KHO
         if (diff !== 0) {
-            await Laptop.findByIdAndUpdate(oldOrder.Laptop, { 
+            var updateResult = await Laptop.findByIdAndUpdate(laptopId, { 
                 $inc: { SoLuong: -diff } 
-            });
+            }, { new: true }); // {new: true} để lấy kết quả kho MỚI NHẤT
+            
+            console.log("6. KHO MỚI CỦA LAPTOP NÀY LÀ:", updateResult ? updateResult.SoLuong : "LỖI: Không tìm thấy Laptop!");
+        } else {
+            console.log("6. KHÔNG CẦN CẬP NHẬT KHO.");
         }
 
-        // 4. Cập nhật dữ liệu vào database đơn hàng
+        // LƯU ĐƠN HÀNG
         var data = {
             TenKhachHang: req.body.TenKhachHang || oldOrder.TenKhachHang,
             SoDienThoai: req.body.SoDienThoai || oldOrder.SoDienThoai,
@@ -98,12 +99,12 @@ router.post('/sua/:id', async (req, res) => {
             TongTien: req.body.TongTien || oldOrder.TongTien,
             TrangThai: newStatus
         };
-        
         await DonHang.findByIdAndUpdate(id, data);
-
+        
+        console.log("========== HOÀN THÀNH SỬA ĐƠN HÀNG ==========\n");
         res.redirect('/donhang');
     } catch (error) {
-        console.log(error);
+        console.log("❌ LỖI CRASH HỆ THỐNG:", error);
         res.send("Lỗi khi cập nhật đơn hàng!");
     }
 });
