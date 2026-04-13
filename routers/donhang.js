@@ -58,15 +58,29 @@ router.post('/sua/:id', async (req, res) => {
         var newQty = req.body.SoLuong ? parseInt(req.body.SoLuong) : oldOrder.SoLuong;
         var newStatus = req.body.TrangThai || oldOrder.TrangThai;
 
-        // 3. LOGIC KHO NÂNG CAO (Xử lý cả Số lượng và Trạng thái "Đã hủy")
-        // - Số lượng thực tế ĐÃ LẤY khỏi kho trước đó (Nếu đơn cũ 'Đã hủy' thì coi như chưa lấy)
-        var oldEffectiveQty = (oldOrder.TrangThai === 'Đã hủy') ? 0 : oldOrder.SoLuong;
+        // 3. TÍNH TOÁN LOGIC KHO (CẬP NHẬT CHỐNG LỖI TIẾNG VIỆT)
+        // Chuyển trạng thái về chữ thường để dễ so sánh
+        var oldStatusStr = oldOrder.TrangThai.toLowerCase();
+        var newStatusStr = newStatus.toLowerCase();
+
+        // Kiểm tra xem trạng thái có chứa từ "hủy" hoặc "huỷ" không
+        var isOldCancelled = oldStatusStr.includes('hủy') || oldStatusStr.includes('huỷ');
+        var isNewCancelled = newStatusStr.includes('hủy') || newStatusStr.includes('huỷ');
+
+        // Nếu đơn cũ đã hủy -> Số lượng thực tế đã lấy khỏi kho là 0
+        var oldEffectiveQty = isOldCancelled ? 0 : oldOrder.SoLuong;
         
-        // - Số lượng thực tế CẦN LẤY khỏi kho bây giờ (Nếu sửa thành 'Đã hủy' thì coi như trả lại bằng 0)
-        var newEffectiveQty = (newStatus === 'Đã hủy') ? 0 : newQty;
+        // Nếu đơn mới là hủy -> Số lượng thực tế cần lấy khỏi kho là 0
+        var newEffectiveQty = isNewCancelled ? 0 : newQty;
 
         // Tính độ chênh lệch
         var diff = newEffectiveQty - oldEffectiveQty;
+
+        // --- BỘ QUÉT LỖI (BẠN HÃY XEM Ở TERMINAL) ---
+        console.log("Trạng thái cũ:", oldOrder.TrangThai, "-> Tính ra số lượng:", oldEffectiveQty);
+        console.log("Trạng thái mới:", newStatus, "-> Tính ra số lượng:", newEffectiveQty);
+        console.log("Mức chênh lệch (Cần trừ kho):", diff);
+        // --------------------------------------------
 
         // Cập nhật kho nếu có sự chênh lệch
         if (diff !== 0) {
