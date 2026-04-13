@@ -45,6 +45,9 @@ router.post('/them', async (req, res) => {
 // POST: Giao diện sửa trạng thái / số lượng đơn hàng
 router.post('/sua/:id', async (req, res) => {
     try {
+        console.log("DỮ LIỆU TỪ FORM SỬA GỬI LÊN:", req.body);
+        // -------------------------
+
         var id = req.params.id;
 
         // 1. Tìm đơn hàng cũ
