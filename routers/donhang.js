@@ -77,8 +77,8 @@ router.post('/sua/:id', async (req, res) => {
         var oldStatusStr = oldOrder.TrangThai.toLowerCase();
         var newStatusStr = newStatus.toLowerCase();
 
-        var isOldCancelled = oldStatusStr.includes('hủy') || oldStatusStr.includes('huỷ');
-        var isNewCancelled = newStatusStr.includes('hủy') || newStatusStr.includes('huỷ');
+        var isOldCancelled = oldStatusStr.includes('Đã hủy') || oldStatusStr.includes('Đã huỷ');
+        var isNewCancelled = newStatusStr.includes('Đã hủy') || newStatusStr.includes('Đã huỷ');
 
         // Tính toán độ chênh lệch thực tế
         var oldEffectiveQty = isOldCancelled ? 0 : oldOrder.SoLuong;
