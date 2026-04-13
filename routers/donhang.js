@@ -37,44 +37,56 @@ router.post('/them', async (req, res) => {
     }
 });
 
-// POST: Cập nhật đơn hàng (Đã tối ưu Logic Kho & Lỗi Tiếng Việt)
+// POST: Bản Debug Tối Thượng (Tìm lỗi trong 1 nốt nhạc)
 router.post('/sua/:id', async (req, res) => {
     try {
+        console.log("\n========== BẮT ĐẦU SỬA ĐƠN HÀNG ==========");
+        console.log("1. Dữ liệu từ Form gửi lên (req.body):", req.body);
+
         var id = req.params.id;
         var oldOrder = await DonHang.findById(id);
 
         if (!oldOrder) {
+            console.log("❌ LỖI: Không tìm thấy đơn hàng trong DB!");
             return res.send("Không tìm thấy đơn hàng!");
         }
 
-        // 1. Đảm bảo lấy đúng ID Laptop
+        // Đảm bảo lấy đúng ID Laptop (phòng trường hợp nó là Object)
         var laptopId = oldOrder.Laptop._id || oldOrder.Laptop;
+        console.log("2. ID Laptop cần cập nhật kho:", laptopId);
 
-        // 2. Lấy dữ liệu an toàn từ Form (Nếu form bị thiếu biến, giữ nguyên giá trị cũ)
+        // Lấy dữ liệu (Nếu form không gửi lên thì lấy dữ liệu cũ)
         var newQty = req.body.SoLuong ? parseInt(req.body.SoLuong) : oldOrder.SoLuong;
         var newStatus = req.body.TrangThai ? req.body.TrangThai : oldOrder.TrangThai;
 
-        // 3. Logic xử lý trạng thái "Hủy" (Bao quát lỗi gõ dấu hỏi/ngã)
+        console.log(`3. Trạng thái: Cũ [${oldOrder.TrangThai}] -> Mới [${newStatus}]`);
+        console.log(`4. Số lượng: Cũ [${oldOrder.SoLuong}] -> Mới [${newQty}]`);
+
+        // TÍNH TOÁN LOGIC
         var oldStatusStr = oldOrder.TrangThai.toLowerCase();
         var newStatusStr = newStatus.toLowerCase();
 
         var isOldCancelled = oldStatusStr.includes('hủy') || oldStatusStr.includes('huỷ');
         var isNewCancelled = newStatusStr.includes('hủy') || newStatusStr.includes('huỷ');
 
-        // 4. Tính toán số lượng thực tế ảnh hưởng đến kho
         var oldEffectiveQty = isOldCancelled ? 0 : oldOrder.SoLuong;
         var newEffectiveQty = isNewCancelled ? 0 : newQty;
 
         var diff = newEffectiveQty - oldEffectiveQty;
+        console.log("5. Mức chênh lệch (diff):", diff, diff > 0 ? "(Cần TRỪ kho)" : diff < 0 ? "(Cần CỘNG kho)" : "(KHÔNG ĐỔI)");
 
-        // 5. Cập nhật kho nếu có chênh lệch
+        // TIẾN HÀNH TRỪ/CỘNG KHO
         if (diff !== 0) {
-            await Laptop.findByIdAndUpdate(laptopId, { 
+            var updateResult = await Laptop.findByIdAndUpdate(laptopId, { 
                 $inc: { SoLuong: -diff } 
-            });
+            }, { new: true }); // {new: true} để lấy kết quả kho MỚI NHẤT
+            
+            console.log("6. KHO MỚI CỦA LAPTOP NÀY LÀ:", updateResult ? updateResult.SoLuong : "LỖI: Không tìm thấy Laptop!");
+        } else {
+            console.log("6. KHÔNG CẦN CẬP NHẬT KHO.");
         }
 
-        // 6. Cập nhật Đơn hàng
+        // LƯU ĐƠN HÀNG
         var data = {
             TenKhachHang: req.body.TenKhachHang || oldOrder.TenKhachHang,
             SoDienThoai: req.body.SoDienThoai || oldOrder.SoDienThoai,
@@ -85,9 +97,10 @@ router.post('/sua/:id', async (req, res) => {
         };
         await DonHang.findByIdAndUpdate(id, data);
         
+        console.log("========== HOÀN THÀNH SỬA ĐƠN HÀNG ==========\n");
         res.redirect('/donhang');
     } catch (error) {
-        console.log("Lỗi hệ thống:", error);
+        console.log("❌ LỖI CRASH HỆ THỐNG:", error);
         res.send("Lỗi khi cập nhật đơn hàng!");
     }
 });
