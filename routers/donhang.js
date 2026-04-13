@@ -25,59 +25,80 @@ router.get('/', async (req, res) => {
 // POST: Thêm đơn hàng mới
 router.post('/them', async (req, res) => {
     try {
-        // Lấy thông tin giá của chiếc laptop được chọn
-        var laptop = await Laptop.findById(req.body.Laptop);
-        var tongTien = laptop.GiaBan * req.body.SoLuong;
-
-        await DonHang.create({
-            TenKhachHang: req.body.TenKhachHang,
-            SoDienThoai: req.body.SoDienThoai,
-            DiaChi: req.body.DiaChi,
-            Laptop: req.body.Laptop,
-            SoLuong: req.body.SoLuong,
-            TongTien: tongTien
-        });
+        var qty = parseInt(req.body.SoLuong);
         
+        // Tạo đơn hàng
+        await DonHang.create(req.body);
+
+        // Trừ số lượng trong kho
+        await Laptop.findByIdAndUpdate(req.body.Laptop, { 
+            $inc: { SoLuong: -qty } 
+        });
+
         res.redirect('/donhang');
     } catch (error) {
         console.log(error);
-        res.send("Lỗi khi thêm đơn hàng!");
     }
 });
 
 // GET: Giao diện sửa trạng thái đơn hàng
-router.get('/sua/:id', async (req, res) => {
-    try {
-        var dh = await DonHang.findById(req.params.id).populate('Laptop');
-        res.render('donhang_sua', {
-            title: 'Cập nhật Đơn hàng',
-            donhang: dh
-        });
-    } catch (error) {
-        console.log(error);
-        res.send("Lỗi tải trang sửa đơn hàng!");
-    }
-});
-
-// POST: Cập nhật trạng thái
 router.post('/sua/:id', async (req, res) => {
     try {
-        await DonHang.findByIdAndUpdate(req.params.id, { TrangThai: req.body.TrangThai });
+        var id = req.params.id;
+        var newQty = parseInt(req.body.SoLuong);
+
+        // 1. Tìm đơn hàng cũ để lấy số lượng cũ và ID Laptop
+        var oldOrder = await DonHang.findById(id);
+        if (!oldOrder) return res.send("Không tìm thấy đơn hàng!");
+
+        // 2. Tính toán chênh lệch
+        // Nếu newQty > oldQty: diff dương (khách mua thêm) -> kho phải trừ đi
+        // Nếu newQty < oldQty: diff âm (khách trả bớt) -> kho được cộng lại
+        var diff = newQty - oldOrder.SoLuong;
+
+        // 3. Cập nhật số lượng trong kho Laptop
+        // Dùng $inc với giá trị âm của diff để tự động cộng/trừ
+        await Laptop.findByIdAndUpdate(oldOrder.Laptop, { 
+            $inc: { SoLuong: -diff } 
+        });
+
+        // 4. Cập nhật dữ liệu đơn hàng
+        var data = {
+            TenKhachHang: req.body.TenKhachHang,
+            SoDienThoai: req.body.SoDienThoai,
+            DiaChi: req.body.DiaChi,
+            SoLuong: newQty,
+            TongTien: req.body.TongTien, // Nhớ tính lại tổng tiền ở frontend hoặc tại đây
+            TrangThai: req.body.TrangThai
+        };
+        await DonHang.findByIdAndUpdate(id, data);
+
         res.redirect('/donhang');
     } catch (error) {
         console.log(error);
-        res.send("Lỗi cập nhật!");
+        res.send("Lỗi khi cập nhật đơn hàng!");
     }
 });
+
+
 
 // GET: Xóa đơn hàng
 router.get('/xoa/:id', async (req, res) => {
     try {
-        await DonHang.findByIdAndDelete(req.params.id);
+        var id = req.params.id;
+        var order = await DonHang.findById(id);
+
+        if (order) {
+            // Cộng lại số lượng vào kho trước khi xóa đơn
+            await Laptop.findByIdAndUpdate(order.Laptop, { 
+                $inc: { SoLuong: order.SoLuong } 
+            });
+            await DonHang.findByIdAndDelete(id);
+        }
+
         res.redirect('/donhang');
     } catch (error) {
         console.log(error);
-        res.send("Lỗi xóa đơn hàng!");
     }
 });
 
