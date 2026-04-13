@@ -36,16 +36,15 @@ router.post('/them', async (req, res) => {
         if (!laptop) return res.send("Không tìm thấy sản phẩm!");
 
         var qty = parseInt(req.body.SoLuong);
-        if (qty <= 0) return res.send("Số lượng không hợp lệ!");
+        if (!qty || qty <= 0) return res.send("Số lượng không hợp lệ!");
 
-        //  Không cho âm kho
+        // Không cho âm kho
         if (laptop.SoLuong < qty) {
             return res.send("Không đủ hàng trong kho!");
         }
 
-        var tongTien = qty * laptop.Gia;
+        var tongTien = qty * laptop.GiaBan;
 
-        // Tạo đơn
         await DonHang.create({
             TenKhachHang: req.body.TenKhachHang,
             SoDienThoai: req.body.SoDienThoai,
@@ -53,19 +52,18 @@ router.post('/them', async (req, res) => {
             Laptop: laptop._id,
             SoLuong: qty,
             TongTien: tongTien,
-            TrangThai: req.body.TrangThai || "Đang xử lý"
+            TrangThai: req.body.TrangThai || "Chờ xác nhận"
         });
 
         // Trừ kho
-        await Laptop.findByIdAndUpdate(laptop._id, {
-            $inc: { SoLuong: -qty }
-        });
+        laptop.SoLuong -= qty;
+        await laptop.save();
 
         res.redirect('/donhang');
 
     } catch (error) {
         console.log(error);
-        res.send("Lỗi thêm đơn hàng!");
+        res.send("Lỗi thêm đơn!");
     }
 });
 
@@ -103,38 +101,51 @@ router.post('/sua/:id', async (req, res) => {
         var laptop = await Laptop.findById(oldOrder.Laptop);
         if (!laptop) return res.send("Không tìm thấy sản phẩm!");
 
-        var newQty = parseInt(req.body.SoLuong) || oldOrder.SoLuong;
-        if (newQty <= 0) return res.send("Số lượng không hợp lệ!");
+        //  Lấy số lượng mới 
+        var newQty = req.body.SoLuong 
+            ? parseInt(req.body.SoLuong) 
+            : oldOrder.SoLuong;
+
+        if (!newQty || newQty <= 0) {
+            return res.send("Số lượng không hợp lệ!");
+        }
 
         var newStatus = req.body.TrangThai || oldOrder.TrangThai;
 
-        // Chuẩn hóa trạng thái
+        //  Chuẩn hóa trạng thái
         var oldStatus = oldOrder.TrangThai.toLowerCase();
         var newStatusStr = newStatus.toLowerCase();
 
         var isOldCancel = oldStatus.includes('đã hủy') || oldStatus.includes('đã huỷ');
         var isNewCancel = newStatusStr.includes('đã hủy') || newStatusStr.includes('đã huỷ');
 
-        // Số lượng thực tế ảnh hưởng kho
+        //  Tính ảnh hưởng kho
         var oldQtyEffect = isOldCancel ? 0 : oldOrder.SoLuong;
         var newQtyEffect = isNewCancel ? 0 : newQty;
 
         var diff = newQtyEffect - oldQtyEffect;
 
-        //  Check kho trước khi update
+        console.log("====== DEBUG ======");
+        console.log("OLD:", oldQtyEffect);
+        console.log("NEW:", newQtyEffect);
+        console.log("DIFF:", diff);
+        console.log("KHO TRƯỚC:", laptop.SoLuong);
+
+        //  Check kho
         if (diff > 0 && laptop.SoLuong < diff) {
-            return res.send("Không đủ hàng trong kho để cập nhật!");
+            return res.send("Không đủ hàng trong kho!");
         }
 
-        // Cập nhật kho
+        //  UPDATE KHO 
         if (diff !== 0) {
-            await Laptop.findByIdAndUpdate(laptop._id, {
-                $inc: { SoLuong: -diff }
-            });
+            laptop.SoLuong = laptop.SoLuong - diff;
+            await laptop.save();
         }
 
-        // Tính lại tiền
-        var tongTien = newQty * laptop.Gia;
+        console.log("KHO SAU:", laptop.SoLuong);
+
+        //  Tính lại tiền
+        var tongTien = newQty * laptop.GiaBan;
 
         // Update đơn
         await DonHang.findByIdAndUpdate(id, {
@@ -156,21 +167,22 @@ router.post('/sua/:id', async (req, res) => {
 
 
 // =======================
-// GET: Xóa đơn
+// GET: Xóa đơn hàng
 // =======================
 router.get('/xoa/:id', async (req, res) => {
     try {
         var order = await DonHang.findById(req.params.id);
         if (!order) return res.redirect('/donhang');
 
+        var laptop = await Laptop.findById(order.Laptop);
+
         var status = order.TrangThai.toLowerCase();
         var isCancel = status.includes('đã hủy') || status.includes('đã huỷ');
 
-        // Chỉ hoàn kho nếu đơn KHÔNG bị hủy
-        if (!isCancel) {
-            await Laptop.findByIdAndUpdate(order.Laptop, {
-                $inc: { SoLuong: order.SoLuong }
-            });
+        //  Chỉ hoàn kho nếu chưa hủy
+        if (!isCancel && laptop) {
+            laptop.SoLuong += order.SoLuong;
+            await laptop.save();
         }
 
         await DonHang.findByIdAndDelete(order._id);
