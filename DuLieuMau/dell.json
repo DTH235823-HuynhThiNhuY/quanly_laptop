@@ -1,47 +1,72 @@
 [
   {
-    "TenLaptop": "Dell Inspiron 14 2-in-1",
-    "DanhMuc": { "$oid": "69d1d2d526748dd218451ee8" },
-    "GiaNhap": 16000000,
-    "GiaBan": 18990000,
-    "SoLuong": 10,
-    "CauHinh": "Core i5-1335U, 8GB RAM, 512GB SSD, Cảm ứng xoay gập",
-    "HinhAnh": "/AnhLapTop/Dell/anh1.jpg"
+    "TenKhachHang": "Nguyễn Văn An",
+    "SoDienThoai": "0901234567",
+    "DiaChi": "Quận 1, TP.HCM",
+    "Laptop": { "$oid": "69d1d2d526748dd218451ee7" },
+    "SoLuong": 1,
+    "TongTien": 25000000,
+    "NgayDat": { "$date": "2026-04-01T08:30:00Z" },
+    "TrangThai": "Hoàn thành"
   },
   {
-    "TenLaptop": "Dell Precision 5570 Workstation",
-    "DanhMuc": { "$oid": "69d1d2d526748dd218451ee8" },
-    "GiaNhap": 45000000,
-    "GiaBan": 51000000,
-    "SoLuong": 5,
-    "CauHinh": "Core i7-12800H, 32GB RAM, 1TB SSD, RTX A1000",
-    "HinhAnh": "/AnhLapTop/Dell/anh2.jpg"
+    "TenKhachHang": "Trần Thị Bình",
+    "SoDienThoai": "0912345678",
+    "DiaChi": "Cầu Giấy, Hà Nội",
+    "Laptop": { "$oid": "69d1d2d526748dd218451ee8" },
+    "SoLuong": 2,
+    "TongTien": 40000000,
+    "NgayDat": { "$date": "2026-04-02T10:00:00Z" },
+    "TrangThai": "Đang giao"
   },
   {
-    "TenLaptop": "Dell Vostro 3520",
-    "DanhMuc": { "$oid": "69d1d2d526748dd218451ee8" },
-    "GiaNhap": 11000000,
-    "GiaBan": 13490000,
-    "SoLuong": 25,
-    "CauHinh": "Core i3-1215U, 8GB RAM, 256GB SSD, Màn 120Hz",
-    "HinhAnh": "/AnhLapTop/Dell/anh3.jpg"
+    "TenKhachHang": "Phạm Minh Đức",
+    "SoDienThoai": "0933445566",
+    "DiaChi": "Thủ Đức, TP.HCM",
+    "Laptop": { "$oid": "69d1d2d526748dd218451ee9" },
+    "SoLuong": 1,
+    "TongTien": 20000000,
+    "NgayDat": { "$date": "2026-04-03T14:20:00Z" },
+    "TrangThai": "Chờ xác nhận"
   },
   {
-    "TenLaptop": "Dell Latitude 7440",
-    "DanhMuc": { "$oid": "69d1d2d526748dd218451ee8" },
-    "GiaNhap": 25000000,
-    "GiaBan": 28500000,
-    "SoLuong": 12,
-    "CauHinh": "Core i7-1355U, 16GB RAM, 512GB SSD, Vỏ Nhôm",
-    "HinhAnh": "/AnhLapTop/Dell/anh4.jpg"
-  },
-  {
-    "TenLaptop": "Dell XPS 13 Plus",
-    "DanhMuc": { "$oid": "69d1d2d526748dd218451ee8" },
-    "GiaNhap": 38000000,
-    "GiaBan": 42990000,
+    "TenKhachHang": "Lê Hoàng Cường",
+    "SoDienThoai": "0987654321",
+    "DiaChi": "Đà Nẵng",
+    "Laptop": { "$oid": "69d1d2d526748dd218451ee7" },
     "SoLuong": 3,
-    "CauHinh": "Core i7-1360P, 16GB RAM, 512GB SSD, Màn OLED 3.5K",
-    "HinhAnh": "/AnhLapTop/Dell/anh5.jpg"
+    "TongTien": 75000000,
+    "NgayDat": { "$date": "2026-04-04T09:00:00Z" },
+    "TrangThai": "Hoàn thành"
+  },
+  {
+    "TenKhachHang": "Võ Hoàng Yến",
+    "SoDienThoai": "0944556677",
+    "DiaChi": "Cần Thơ",
+    "Laptop": { "$oid": "69d1d2d526748dd218451ee8" },
+    "SoLuong": 1,
+    "TongTien": 20000000,
+    "NgayDat": { "$date": "2026-04-05T16:45:00Z" },
+    "TrangThai": "Đã hủy"
+  },
+  {
+    "TenKhachHang": "Ngô Thanh Tùng",
+    "SoDienThoai": "0977888999",
+    "DiaChi": "Bình Dương",
+    "Laptop": { "$oid": "69d1d2d526748dd218451ee9" },
+    "SoLuong": 2,
+    "TongTien": 40000000,
+    "NgayDat": { "$date": "2026-04-06T11:15:00Z" },
+    "TrangThai": "Đang giao"
+  },
+  {
+    "TenKhachHang": "Đỗ Thị Lan",
+    "SoDienThoai": "0966554433",
+    "DiaChi": "Huế",
+    "Laptop": { "$oid": "69d1d2d526748dd218451ee7" },
+    "SoLuong": 1,
+    "TongTien": 25000000,
+    "NgayDat": { "$date": "2026-04-07T08:00:00Z" },
+    "TrangThai": "Chờ xác nhận"
   }
 ]
