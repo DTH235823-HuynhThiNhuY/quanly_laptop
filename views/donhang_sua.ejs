@@ -21,24 +21,27 @@
             </div>
 
             <form action="/donhang/sua/<%= donhang._id %>" method="POST">
-                <div class="mb-4">
-                    <label class="form-label fw-bold">Trạng thái đơn hàng</label>
-                    <input type="number" class="form-control" name="SoLuong" value="<%= donhang.SoLuong %>">
+                
+                <div class="mb-3">
+                    <label class="form-label fw-bold text-dark">Số lượng sản phẩm</label>
+                    <input type="number" class="form-control" name="SoLuong" value="<%= donhang.SoLuong %>" min="1" required>
+                </div>
 
+                <div class="mb-4">
+                    <label class="form-label fw-bold text-dark">Trạng thái đơn hàng</label>
                     <select class="form-select" name="TrangThai">
-                        <option value="Chờ xác nhận" <%=donhang.TrangThai=='Chờ xác nhận' ? 'selected' : '' %>>Chờ xác
-                            nhận</option>
-                        <option value="Đang giao" <%=donhang.TrangThai=='Đang giao' ? 'selected' : '' %>>Đang giao
-                        </option>
-                        <option value="Hoàn thành" <%=donhang.TrangThai=='Hoàn thành' ? 'selected' : '' %>>Hoàn thành
-                        </option>
-                        <option value="Đã hủy" <%=donhang.TrangThai=='Đã hủy' ? 'selected' : '' %>>Đã hủy</option>
+                        <option value="Chờ xác nhận" <%= donhang.TrangThai == 'Chờ xác nhận' ? 'selected' : '' %>>Chờ xác nhận</option>
+                        <option value="Đang giao" <%= donhang.TrangThai == 'Đang giao' ? 'selected' : '' %>>Đang giao</option>
+                        <option value="Hoàn thành" <%= donhang.TrangThai == 'Hoàn thành' ? 'selected' : '' %>>Hoàn thành</option>
+                        <option value="Đã hủy" <%= donhang.TrangThai == 'Đã hủy' ? 'selected' : '' %>>Đã hủy</option>
                     </select>
                 </div>
 
-                <div class="text-end mt-4">
-                    <a href="/donhang" class="btn btn-secondary px-4 me-2">Quay lại</a>
-                    <button type="submit" class="btn btn-primary px-4">Lưu Trạng Thái</button>
+                <div class="text-end mt-4 border-top pt-3">
+                    <a href="/donhang" class="btn btn-light border px-4 me-2">Hủy bỏ</a>
+                    <button type="submit" class="btn btn-primary px-4">
+                        <i class="fa-solid fa-floppy-disk me-1"></i> Lưu Thay Đổi
+                    </button>
                 </div>
             </form>
         </div>
