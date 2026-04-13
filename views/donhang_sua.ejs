@@ -1,37 +1,52 @@
 <%- include('navbar') %>
 
-<div class="card shadow-sm border-0 rounded-4 mt-4" style="max-width: 600px; margin: 0 auto;">
-    <div class="card-body p-5">
-        <h4 class="fw-bold mb-4 text-center text-primary">Cập nhật Đơn Hàng</h4>
-        
-        <div class="mb-4 p-3 bg-light rounded">
-            <p class="mb-1"><strong>Khách hàng:</strong> <%= donhang.TenKhachHang %> - <%= donhang.SoDienThoai %></p>
-            <p class="mb-1"><strong>Địa chỉ:</strong> <%= donhang.DiaChi %></p>
-            <p class="mb-1"><strong>Sản phẩm:</strong> <%= donhang.Laptop ? donhang.Laptop.TenLaptop : 'Sản phẩm đã bị xóa khỏi hệ thống' %> (SL: <%= donhang.SoLuong %>)</p>
-            <p class="mb-0 text-danger"><strong>Tổng thu:</strong> <%= donhang.TongTien.toLocaleString('vi-VN') %> ₫</p>
+    <div class="card shadow-sm border-0 rounded-4 mt-4" style="max-width: 600px; margin: 0 auto;">
+        <div class="card-body p-5">
+            <h4 class="fw-bold mb-4 text-center text-primary">Cập nhật Đơn Hàng</h4>
+
+            <div class="mb-4 p-3 bg-light rounded">
+                <p class="mb-1"><strong>Khách hàng:</strong>
+                    <%= donhang.TenKhachHang %> - <%= donhang.SoDienThoai %>
+                </p>
+                <p class="mb-1"><strong>Địa chỉ:</strong>
+                    <%= donhang.DiaChi %>
+                </p>
+                <p class="mb-1"><strong>Sản phẩm:</strong>
+                    <%= donhang.Laptop ? donhang.Laptop.TenLaptop : 'Sản phẩm đã bị xóa khỏi hệ thống' %> (SL: <%=
+                            donhang.SoLuong %>)
+                </p>
+                <p class="mb-0 text-danger"><strong>Tổng thu:</strong>
+                    <%= donhang.TongTien.toLocaleString('vi-VN') %> ₫
+                </p>
+            </div>
+
+            <form action="/donhang/sua/<%= donhang._id %>" method="POST">
+                <div class="mb-4">
+                    <label class="form-label fw-bold">Trạng thái đơn hàng</label>
+                    <input type="number" class="form-control" name="SoLuong" value="<%= donhang.SoLuong %>">
+
+                    <select class="form-select" name="TrangThai">
+                        <option value="Chờ xác nhận" <%=donhang.TrangThai=='Chờ xác nhận' ? 'selected' : '' %>>Chờ xác
+                            nhận</option>
+                        <option value="Đang giao" <%=donhang.TrangThai=='Đang giao' ? 'selected' : '' %>>Đang giao
+                        </option>
+                        <option value="Hoàn thành" <%=donhang.TrangThai=='Hoàn thành' ? 'selected' : '' %>>Hoàn thành
+                        </option>
+                        <option value="Đã hủy" <%=donhang.TrangThai=='Đã hủy' ? 'selected' : '' %>>Đã hủy</option>
+                    </select>
+                </div>
+
+                <div class="text-end mt-4">
+                    <a href="/donhang" class="btn btn-secondary px-4 me-2">Quay lại</a>
+                    <button type="submit" class="btn btn-primary px-4">Lưu Trạng Thái</button>
+                </div>
+            </form>
         </div>
-
-        <form action="/donhang/sua/<%= donhang._id %>" method="POST">
-            <div class="mb-4">
-                <label class="form-label fw-bold">Trạng thái đơn hàng</label>
-                <select class="form-select border-primary" name="TrangThai">
-                    <option value="Chờ xác nhận" <%= donhang.TrangThai === 'Chờ xác nhận' ? 'selected' : '' %>>Chờ xác nhận</option>
-                    <option value="Đang giao" <%= donhang.TrangThai === 'Đang giao' ? 'selected' : '' %>>Đang giao</option>
-                    <option value="Hoàn thành" <%= donhang.TrangThai === 'Hoàn thành' ? 'selected' : '' %>>Hoàn thành</option>
-                    <option value="Đã hủy" <%= donhang.TrangThai === 'Đã hủy' ? 'selected' : '' %>>Đã hủy</option>
-                </select>
-            </div>
-            
-            <div class="text-end mt-4">
-                <a href="/donhang" class="btn btn-secondary px-4 me-2">Quay lại</a>
-                <button type="submit" class="btn btn-primary px-4">Lưu Trạng Thái</button>
-            </div>
-        </form>
     </div>
-</div>
 
-<%- include('footer') %>
-</div>
-<%- include('javascript') %>
-</body>
-</html>
+    <%- include('footer') %>
+        </div>
+        <%- include('javascript') %>
+            </body>
+
+            </html>

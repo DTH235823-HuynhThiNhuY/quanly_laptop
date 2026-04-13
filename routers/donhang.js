@@ -42,35 +42,46 @@ router.post('/them', async (req, res) => {
 });
 
 // GET: Giao diện sửa trạng thái đơn hàng
+// POST: Giao diện sửa trạng thái / số lượng đơn hàng
 router.post('/sua/:id', async (req, res) => {
     try {
         var id = req.params.id;
-        var newQty = parseInt(req.body.SoLuong);
 
-        // 1. Tìm đơn hàng cũ để lấy số lượng cũ và ID Laptop
+        // 1. Tìm đơn hàng cũ
         var oldOrder = await DonHang.findById(id);
         if (!oldOrder) return res.send("Không tìm thấy đơn hàng!");
 
-        // 2. Tính toán chênh lệch
-        // Nếu newQty > oldQty: diff dương (khách mua thêm) -> kho phải trừ đi
-        // Nếu newQty < oldQty: diff âm (khách trả bớt) -> kho được cộng lại
-        var diff = newQty - oldOrder.SoLuong;
+        // 2. Lấy dữ liệu mới (Nếu form không có SoLuong thì lấy lại số lượng cũ để không bị lỗi)
+        var newQty = req.body.SoLuong ? parseInt(req.body.SoLuong) : oldOrder.SoLuong;
+        var newStatus = req.body.TrangThai || oldOrder.TrangThai;
 
-        // 3. Cập nhật số lượng trong kho Laptop
-        // Dùng $inc với giá trị âm của diff để tự động cộng/trừ
-        await Laptop.findByIdAndUpdate(oldOrder.Laptop, { 
-            $inc: { SoLuong: -diff } 
-        });
+        // 3. LOGIC KHO NÂNG CAO (Xử lý cả Số lượng và Trạng thái "Đã hủy")
+        // - Số lượng thực tế ĐÃ LẤY khỏi kho trước đó (Nếu đơn cũ 'Đã hủy' thì coi như chưa lấy)
+        var oldEffectiveQty = (oldOrder.TrangThai === 'Đã hủy') ? 0 : oldOrder.SoLuong;
+        
+        // - Số lượng thực tế CẦN LẤY khỏi kho bây giờ (Nếu sửa thành 'Đã hủy' thì coi như trả lại bằng 0)
+        var newEffectiveQty = (newStatus === 'Đã hủy') ? 0 : newQty;
 
-        // 4. Cập nhật dữ liệu đơn hàng
+        // Tính độ chênh lệch
+        var diff = newEffectiveQty - oldEffectiveQty;
+
+        // Cập nhật kho nếu có sự chênh lệch
+        if (diff !== 0) {
+            await Laptop.findByIdAndUpdate(oldOrder.Laptop, { 
+                $inc: { SoLuong: -diff } 
+            });
+        }
+
+        // 4. Cập nhật dữ liệu vào database đơn hàng
         var data = {
-            TenKhachHang: req.body.TenKhachHang,
-            SoDienThoai: req.body.SoDienThoai,
-            DiaChi: req.body.DiaChi,
+            TenKhachHang: req.body.TenKhachHang || oldOrder.TenKhachHang,
+            SoDienThoai: req.body.SoDienThoai || oldOrder.SoDienThoai,
+            DiaChi: req.body.DiaChi || oldOrder.DiaChi,
             SoLuong: newQty,
-            TongTien: req.body.TongTien, // Nhớ tính lại tổng tiền ở frontend hoặc tại đây
-            TrangThai: req.body.TrangThai
+            TongTien: req.body.TongTien || oldOrder.TongTien,
+            TrangThai: newStatus
         };
+        
         await DonHang.findByIdAndUpdate(id, data);
 
         res.redirect('/donhang');
