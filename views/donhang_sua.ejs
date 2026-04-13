@@ -7,7 +7,7 @@
         <div class="mb-4 p-3 bg-light rounded">
             <p class="mb-1"><strong>Khách hàng:</strong> <%= donhang.TenKhachHang %> - <%= donhang.SoDienThoai %></p>
             <p class="mb-1"><strong>Địa chỉ:</strong> <%= donhang.DiaChi %></p>
-            <p class="mb-1"><strong>Sản phẩm:</strong> <%= donhang.Laptop.TenLaptop %> (SL: <%= donhang.SoLuong %>)</p>
+            <p class="mb-1"><strong>Sản phẩm:</strong> <%= donhang.Laptop ? donhang.Laptop.TenLaptop : 'Sản phẩm đã bị xóa khỏi hệ thống' %> (SL: <%= donhang.SoLuong %>)</p>
             <p class="mb-0 text-danger"><strong>Tổng thu:</strong> <%= donhang.TongTien.toLocaleString('vi-VN') %> ₫</p>
         </div>
 
