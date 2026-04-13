@@ -36,7 +36,28 @@ router.post('/them', async (req, res) => {
         console.log(error);
     }
 });
+// GET: Hiển thị giao diện Form sửa đơn hàng
+router.get('/sua/:id', async (req, res) => {
+    try {
+        var id = req.params.id;
+        
+        // Tìm đơn hàng theo ID và lấy kèm thông tin Laptop để hiển thị tên máy
+        var dh = await DonHang.findById(id).populate('Laptop');
 
+        if (!dh) {
+            return res.send("Không tìm thấy đơn hàng!");
+        }
+
+        // Gọi file giao diện donhang_sua.ejs và truyền dữ liệu ra
+        res.render('donhang_sua', {
+            title: 'Cập nhật Đơn hàng',
+            donhang: dh
+        });
+    } catch (error) {
+        console.log(error);
+        res.send("Lỗi khi tải trang sửa đơn hàng!");
+    }
+});
 // POST: Bản Debug Tối Thượng (Tìm lỗi trong 1 nốt nhạc)
 router.post('/sua/:id', async (req, res) => {
     try {
