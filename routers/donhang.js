@@ -3,11 +3,17 @@ var router = express.Router();
 var DonHang = require('../models/donhang');
 var Laptop = require('../models/laptop');
 
+
+// =======================
 // GET: Danh sách đơn hàng
+// =======================
 router.get('/', async (req, res) => {
     try {
-        var dsDonHang = await DonHang.find().populate('Laptop').sort({ NgayDat: -1 });
-        var dsLaptop = await Laptop.find({ SoLuong: { $gt: 0 } }); 
+        var dsDonHang = await DonHang.find()
+            .populate('Laptop')
+            .sort({ NgayDat: -1 });
+
+        var dsLaptop = await Laptop.find({ SoLuong: { $gt: 0 } });
 
         res.render('donhang', {
             title: 'Quản lý Đơn hàng',
@@ -16,118 +22,166 @@ router.get('/', async (req, res) => {
         });
     } catch (error) {
         console.log(error);
-        res.send("Lỗi tải trang đơn hàng!");
+        res.send("Lỗi tải trang!");
     }
 });
 
-// POST: Thêm đơn hàng mới
+
+// =======================
+// POST: Thêm đơn hàng
+// =======================
 router.post('/them', async (req, res) => {
     try {
-        var qty = parseInt(req.body.SoLuong);
-        
-        await DonHang.create(req.body);
+        var laptop = await Laptop.findById(req.body.Laptop);
+        if (!laptop) return res.send("Không tìm thấy sản phẩm!");
 
-        // Tự động trừ kho khi có đơn mới
-        await Laptop.findByIdAndUpdate(req.body.Laptop, { 
-            $inc: { SoLuong: -qty } 
+        var qty = parseInt(req.body.SoLuong);
+        if (qty <= 0) return res.send("Số lượng không hợp lệ!");
+
+        //  Không cho âm kho
+        if (laptop.SoLuong < qty) {
+            return res.send("Không đủ hàng trong kho!");
+        }
+
+        var tongTien = qty * laptop.Gia;
+
+        // Tạo đơn
+        await DonHang.create({
+            TenKhachHang: req.body.TenKhachHang,
+            SoDienThoai: req.body.SoDienThoai,
+            DiaChi: req.body.DiaChi,
+            Laptop: laptop._id,
+            SoLuong: qty,
+            TongTien: tongTien,
+            TrangThai: req.body.TrangThai || "Đang xử lý"
+        });
+
+        // Trừ kho
+        await Laptop.findByIdAndUpdate(laptop._id, {
+            $inc: { SoLuong: -qty }
         });
 
         res.redirect('/donhang');
+
     } catch (error) {
         console.log(error);
+        res.send("Lỗi thêm đơn hàng!");
     }
 });
 
-// GET: Hiển thị giao diện Form sửa đơn hàng
+
+// =======================
+// GET: Form sửa
+// =======================
 router.get('/sua/:id', async (req, res) => {
     try {
-        var id = req.params.id;
-        var dh = await DonHang.findById(id).populate('Laptop');
-
-        if (!dh) {
-            return res.send("Không tìm thấy đơn hàng!");
-        }
+        var dh = await DonHang.findById(req.params.id).populate('Laptop');
+        if (!dh) return res.send("Không tìm thấy đơn!");
 
         res.render('donhang_sua', {
-            title: 'Cập nhật Đơn hàng',
+            title: 'Cập nhật đơn hàng',
             donhang: dh
         });
+
     } catch (error) {
         console.log(error);
-        res.send("Lỗi khi tải trang sửa đơn hàng!");
+        res.send("Lỗi!");
     }
 });
 
-// POST: Cập nhật đơn hàng (Tối ưu logic kho & Trạng thái Hủy)
+
+// =======================
+// POST: Sửa đơn hàng
+// =======================
 router.post('/sua/:id', async (req, res) => {
     try {
         var id = req.params.id;
+
         var oldOrder = await DonHang.findById(id);
+        if (!oldOrder) return res.send("Không tìm thấy đơn!");
 
-        if (!oldOrder) {
-            return res.send("Không tìm thấy đơn hàng!");
-        }
+        var laptop = await Laptop.findById(oldOrder.Laptop);
+        if (!laptop) return res.send("Không tìm thấy sản phẩm!");
 
-        var laptopId = oldOrder.Laptop._id || oldOrder.Laptop;
+        var newQty = parseInt(req.body.SoLuong) || oldOrder.SoLuong;
+        if (newQty <= 0) return res.send("Số lượng không hợp lệ!");
 
-        var newQty = req.body.SoLuong ? parseInt(req.body.SoLuong) : oldOrder.SoLuong;
-        var newStatus = req.body.TrangThai ? req.body.TrangThai : oldOrder.TrangThai;
+        var newStatus = req.body.TrangThai || oldOrder.TrangThai;
 
-        // Xử lý logic trạng thái "Hủy" (bao quát lỗi gõ dấu)
-        var oldStatusStr = oldOrder.TrangThai.toLowerCase();
+        // Chuẩn hóa trạng thái
+        var oldStatus = oldOrder.TrangThai.toLowerCase();
         var newStatusStr = newStatus.toLowerCase();
 
-        var isOldCancelled = oldStatusStr.includes('Đã hủy') || oldStatusStr.includes('Đã huỷ');
-        var isNewCancelled = newStatusStr.includes('Đã hủy') || newStatusStr.includes('Đã huỷ');
+        var isOldCancel = oldStatus.includes('đã hủy') || oldStatus.includes('đã huỷ');
+        var isNewCancel = newStatusStr.includes('đã hủy') || newStatusStr.includes('đã huỷ');
 
-        // Tính toán độ chênh lệch thực tế
-        var oldEffectiveQty = isOldCancelled ? 0 : oldOrder.SoLuong;
-        var newEffectiveQty = isNewCancelled ? 0 : newQty;
-        var diff = newEffectiveQty - oldEffectiveQty;
+        // Số lượng thực tế ảnh hưởng kho
+        var oldQtyEffect = isOldCancel ? 0 : oldOrder.SoLuong;
+        var newQtyEffect = isNewCancel ? 0 : newQty;
 
-        // Tự động bù/trừ kho nếu có sự thay đổi
+        var diff = newQtyEffect - oldQtyEffect;
+
+        //  Check kho trước khi update
+        if (diff > 0 && laptop.SoLuong < diff) {
+            return res.send("Không đủ hàng trong kho để cập nhật!");
+        }
+
+        // Cập nhật kho
         if (diff !== 0) {
-            await Laptop.findByIdAndUpdate(laptopId, { 
-                $inc: { SoLuong: -diff } 
+            await Laptop.findByIdAndUpdate(laptop._id, {
+                $inc: { SoLuong: -diff }
             });
         }
 
-        // Cập nhật thông tin đơn hàng
-        var data = {
+        // Tính lại tiền
+        var tongTien = newQty * laptop.Gia;
+
+        // Update đơn
+        await DonHang.findByIdAndUpdate(id, {
             TenKhachHang: req.body.TenKhachHang || oldOrder.TenKhachHang,
             SoDienThoai: req.body.SoDienThoai || oldOrder.SoDienThoai,
             DiaChi: req.body.DiaChi || oldOrder.DiaChi,
             SoLuong: newQty,
-            TongTien: req.body.TongTien || oldOrder.TongTien,
+            TongTien: tongTien,
             TrangThai: newStatus
-        };
-        await DonHang.findByIdAndUpdate(id, data);
-        
+        });
+
         res.redirect('/donhang');
+
     } catch (error) {
         console.log(error);
-        res.send("Lỗi khi cập nhật đơn hàng!");
+        res.send("Lỗi cập nhật!");
     }
 });
 
-// GET: Xóa đơn hàng
+
+// =======================
+// GET: Xóa đơn
+// =======================
 router.get('/xoa/:id', async (req, res) => {
     try {
-        var id = req.params.id;
-        var order = await DonHang.findById(id);
+        var order = await DonHang.findById(req.params.id);
+        if (!order) return res.redirect('/donhang');
 
-        if (order) {
-            // Tự động hoàn kho trước khi xóa hẳn đơn hàng
-            await Laptop.findByIdAndUpdate(order.Laptop, { 
-                $inc: { SoLuong: order.SoLuong } 
+        var status = order.TrangThai.toLowerCase();
+        var isCancel = status.includes('đã hủy') || status.includes('đã huỷ');
+
+        // Chỉ hoàn kho nếu đơn KHÔNG bị hủy
+        if (!isCancel) {
+            await Laptop.findByIdAndUpdate(order.Laptop, {
+                $inc: { SoLuong: order.SoLuong }
             });
-            await DonHang.findByIdAndDelete(id);
         }
 
+        await DonHang.findByIdAndDelete(order._id);
+
         res.redirect('/donhang');
+
     } catch (error) {
         console.log(error);
+        res.send("Lỗi xóa!");
     }
 });
+
 
 module.exports = router;
