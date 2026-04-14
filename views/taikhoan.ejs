@@ -1,21 +1,22 @@
 <%- include('navbar') %>
 
 <div class="table-wrapper mt-4">
-    <h5 class="fw-bold mb-4 text-secondary"><i class="fa-solid fa-users-gear me-2"></i>Danh sách Tài khoản hệ thống</h5>
+    <h5 class="fw-bold mb-4 text-secondary"><i class="fa-solid fa-users-gear me-2"></i>Quản lý Nhân sự hệ thống</h5>
     
     <div class="table-responsive">
         <table class="table table-hover align-middle border">
             <thead class="table-light">
                 <tr>
                     <th>Ảnh</th>
-                    <th>Họ Tên / Tên đăng nhập</th>
-                    <th>Quyền hiện tại</th>
-                    <th class="text-center">Hành động</th>
+                    <th>Họ Tên / Email</th>
+                    <th>Quyền hạn</th>
+                    <th>Trạng thái</th>
+                    <th class="text-center">Thao tác</th>
                 </tr>
             </thead>
             <tbody>
                 <% users.forEach(u => { %>
-                    <tr>
+                    <tr class="<%= (user && user._id.toString() === u._id.toString()) ? 'table-info' : '' %>">
                         <td>
                             <img src="<%= u.HinhAnh ? u.HinhAnh : 'https://ui-avatars.com/api/?name=' + u.HoVaTen %>" 
                                  class="rounded-circle border" width="40" height="40">
@@ -25,20 +26,31 @@
                             <small class="text-muted"><%= u.TenDangNhap %></small>
                         </td>
                         <td>
-                            <span class="badge <%= u.QuyenHan === 'admin' ? 'bg-danger' : 'bg-info text-dark' %> rounded-pill px-3">
+                            <span class="badge <%= u.QuyenHan === 'admin' ? 'bg-danger' : 'bg-info text-dark' %> rounded-pill">
                                 <%= u.QuyenHan.toUpperCase() %>
                             </span>
                         </td>
+                        <td>
+                            <% if(u.KichHoat === 1) { %>
+                                <span class="text-success small"><i class="fa-solid fa-circle-check me-1"></i>Đang hoạt động</span>
+                            <% } else { %>
+                                <span class="text-danger small"><i class="fa-solid fa-circle-xmark me-1"></i>Đang bị khóa</span>
+                            <% } %>
+                        </td>
                         <td class="text-center">
-                            <% if (user && user._id.toString() !== u._id.toString()) { %>
+                            <% if(user && user._id.toString() !== u._id.toString()) { %>
                                 <form action="/taikhoan/doi-quyen/<%= u._id %>" method="POST" class="d-inline">
-                                    <button type="submit" class="btn btn-sm <%= u.QuyenHan === 'admin' ? 'btn-outline-secondary' : 'btn-outline-danger' %> px-3 rounded-pill">
-                                        <i class="fa-solid fa-arrows-rotate me-1"></i>
-                                        <%= u.QuyenHan === 'admin' ? 'Hạ quyền Staff' : 'Nâng quyền Admin' %>
+                                    <button type="submit" class="btn btn-sm btn-outline-warning" title="Đổi quyền hạn">
+                                        <i class="fa-solid fa-user-shield"></i>
+                                    </button>
+                                </form>
+                                <form action="/taikhoan/doi-trang-thai/<%= u._id %>" method="POST" class="d-inline ms-1">
+                                    <button type="submit" class="btn btn-sm <%= u.KichHoat === 1 ? 'btn-outline-danger' : 'btn-outline-success' %>">
+                                        <i class="fa-solid <%= u.KichHoat === 1 ? 'fa-lock' : 'fa-lock-open' %>"></i>
                                     </button>
                                 </form>
                             <% } else { %>
-                                <small class="text-muted fst-italic">Tài khoản hiện tại</small>
+                                <small class="text-muted fst-italic">Tài khoản của bạn</small>
                             <% } %>
                         </td>
                     </tr>
