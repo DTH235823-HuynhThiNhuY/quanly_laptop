@@ -4,54 +4,60 @@
         <div class="card-body p-5">
             <h4 class="fw-bold mb-4 text-center text-primary">Cập nhật Đơn Hàng</h4>
 
-            <% if (typeof user !== 'undefined' && user !== null && user.QuyenHan === 'admin') { %>
+            <% if (user && user.QuyenHan==='staff' ) { %>
                 <div class="alert alert-info py-2 mb-4" style="font-size: 0.9rem;">
-                    <i class="fa-solid fa-circle-info me-1"></i> <strong>Quyền Nhân viên:</strong> Bạn chỉ được phép cập nhật Trạng thái giao hàng.
+                    <i class="fa-solid fa-circle-info me-1"></i>
+                    <strong>Quyền Nhân viên:</strong> Bạn chỉ được phép cập nhật Trạng thái giao hàng.
                 </div>
-            <% } %>
+                <% } %>
 
-            <div class="mb-4 p-3 bg-light rounded">
-                <p class="mb-1"><strong>Khách hàng:</strong>
-                    <%= donhang.TenKhachHang %> - <%= donhang.SoDienThoai %>
-                </p>
-                <p class="mb-1"><strong>Địa chỉ:</strong>
-                    <%= donhang.DiaChi %>
-                </p>
-                <p class="mb-1"><strong>Sản phẩm:</strong>
-                    <%= donhang.Laptop ? donhang.Laptop.TenLaptop : 'Sản phẩm đã bị xóa khỏi hệ thống' %> (SL: <%=
-                            donhang.SoLuong %>)
-                </p>
-                <p class="mb-0 text-danger"><strong>Tổng thu:</strong>
-                    <%= donhang.TongTien.toLocaleString('vi-VN') %> ₫
-                </p>
-            </div>
+                    <div class="mb-4 p-3 bg-light rounded">
+                        <p class="mb-1"><strong>Khách hàng:</strong>
+                            <%= donhang.TenKhachHang %> - <%= donhang.SoDienThoai %>
+                        </p>
+                        <p class="mb-1"><strong>Địa chỉ:</strong>
+                            <%= donhang.DiaChi %>
+                        </p>
+                        <p class="mb-1"><strong>Sản phẩm:</strong>
+                            <%= donhang.Laptop ? donhang.Laptop.TenLaptop : 'Sản phẩm đã bị xóa khỏi hệ thống' %> (SL:
+                                <%= donhang.SoLuong %>)
+                        </p>
+                        <p class="mb-0 text-danger"><strong>Tổng thu:</strong>
+                            <%= donhang.TongTien.toLocaleString('vi-VN') %> ₫
+                        </p>
+                    </div>
 
-            <form action="/donhang/sua/<%= donhang._id %>" method="POST">
-                
-                <div class="mb-3">
-                    <label class="form-label fw-bold text-dark">Số lượng sản phẩm</label>
-                    <input type="number" class="form-control <%= (typeof user !== 'undefined' && user.QuyenHan !== 'admin') ? 'bg-light text-muted' : '' %>" 
-                        name="SoLuong" value="<%= donhang.SoLuong %>" min="1" 
-                        <%= (typeof user !== 'undefined' && user.QuyenHan === 'admin') ? '' : 'readonly' %> required>
-                </div>
+                    <form action="/donhang/sua/<%= donhang._id %>" method="POST">
 
-                <div class="mb-4">
-                    <label class="form-label fw-bold text-dark">Trạng thái đơn hàng</label>
-                    <select class="form-select" name="TrangThai">
-                        <option value="Chờ xác nhận" <%= donhang.TrangThai == 'Chờ xác nhận' ? 'selected' : '' %>>Chờ xác nhận</option>
-                        <option value="Đang giao" <%= donhang.TrangThai == 'Đang giao' ? 'selected' : '' %>>Đang giao</option>
-                        <option value="Hoàn thành" <%= donhang.TrangThai == 'Hoàn thành' ? 'selected' : '' %>>Hoàn thành</option>
-                        <option value="Đã hủy" <%= donhang.TrangThai == 'Đã hủy' ? 'selected' : '' %>>Đã hủy</option>
-                    </select>
-                </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold text-dark">Số lượng sản phẩm</label>
+                            <input type="number"
+                                class="form-control <%= (typeof user !== 'undefined' && user.QuyenHan !== 'admin') ? 'bg-light text-muted' : '' %>"
+                                name="SoLuong" value="<%= donhang.SoLuong %>" min="1" <%=(typeof user !=='undefined' &&
+                                user.QuyenHan==='admin' ) ? '' : 'readonly' %> required>
+                        </div>
 
-                <div class="text-end mt-4 border-top pt-3">
-                    <a href="/donhang" class="btn btn-light border px-4 me-2">Hủy bỏ</a>
-                    <button type="submit" class="btn btn-primary px-4">
-                        <i class="fa-solid fa-floppy-disk me-1"></i> Lưu Thay Đổi
-                    </button>
-                </div>
-            </form>
+                        <div class="mb-4">
+                            <label class="form-label fw-bold text-dark">Trạng thái đơn hàng</label>
+                            <select class="form-select" name="TrangThai">
+                                <option value="Chờ xác nhận" <%=donhang.TrangThai=='Chờ xác nhận' ? 'selected' : '' %>
+                                    >Chờ xác nhận</option>
+                                <option value="Đang giao" <%=donhang.TrangThai=='Đang giao' ? 'selected' : '' %>>Đang
+                                    giao</option>
+                                <option value="Hoàn thành" <%=donhang.TrangThai=='Hoàn thành' ? 'selected' : '' %>>Hoàn
+                                    thành</option>
+                                <option value="Đã hủy" <%=donhang.TrangThai=='Đã hủy' ? 'selected' : '' %>>Đã hủy
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="text-end mt-4 border-top pt-3">
+                            <a href="/donhang" class="btn btn-light border px-4 me-2">Hủy bỏ</a>
+                            <button type="submit" class="btn btn-primary px-4">
+                                <i class="fa-solid fa-floppy-disk me-1"></i> Lưu Thay Đổi
+                            </button>
+                        </div>
+                    </form>
         </div>
     </div>
 

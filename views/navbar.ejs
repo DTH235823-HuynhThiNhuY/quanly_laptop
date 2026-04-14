@@ -102,29 +102,33 @@
             <a href="/danhmuc"><i class="fa-solid fa-tags me-2"></i> Hãng sản xuất</a>
             <a href="/donhang"><i class="fa-solid fa-cart-shopping me-2"></i> Đơn hàng</a>
             <a href="/khachhang"><i class="fa-solid fa-users me-2"></i> Khách hàng</a>
-            
-            <% if (typeof user !== 'undefined' && user !== null && user.QuyenHan === 'admin') { %>
+
+            <% if (typeof user !=='undefined' && user !==null && user.QuyenHan==='admin' ) { %>
                 <a href="/thongke"><i class="fa-solid fa-chart-line me-2"></i> Thống kê</a>
-            <% } %>
+                <% } %>
         </div>
         <div class="mt-auto border-top border-secondary">
-            <% if (typeof user !== 'undefined' && user !== null && user.QuyenHan === 'admin') { %>
-                <a href="/dangxuat" class="text-danger"><i class="fa-solid fa-right-from-bracket me-2"></i> Đăng xuất</a>
-            <% } else { %>
-                <a href="/dangnhap" class="text-success"><i class="fa-solid fa-right-to-bracket me-2"></i> Đăng nhập</a>
-            <% } %>
+            <% if (typeof user !=='undefined' && user !==null && user.QuyenHan==='admin' ) { %>
+                <a href="/dangxuat" class="text-danger"><i class="fa-solid fa-right-from-bracket me-2"></i> Đăng
+                    xuất</a>
+                <% } else { %>
+                    <a href="/dangnhap" class="text-success"><i class="fa-solid fa-right-to-bracket me-2"></i> Đăng
+                        nhập</a>
+                    <% } %>
         </div>
     </div>
 
     <div class="main-content">
         <nav class="navbar navbar-expand-lg navbar-light bg-white rounded-pill px-4 mb-4 shadow-sm">
             <div class="container-fluid">
-                <span class="navbar-brand mb-0 h1 fw-bold text-secondary"><%= typeof title !== 'undefined' ? title : 'Quản lý' %></span>
+                <span class="navbar-brand mb-0 h1 fw-bold text-secondary">
+                    <%= typeof title !=='undefined' ? title : 'Quản lý' %>
+                </span>
                 <div class="d-flex align-items-center">
-                    
+
                     <form action="/laptop" method="GET" class="input-group me-3" style="width: 250px;">
                         <input type="text" name="q" class="form-control rounded-pill bg-light border-0 pe-5"
-                            placeholder="Tìm kiếm laptop..." 
+                            placeholder="Tìm kiếm laptop..."
                             value="<%= typeof keyword !== 'undefined' ? keyword : '' %>">
                         <button class="btn border-0 position-absolute end-0 z-3 rounded-pill" type="submit">
                             <i class="fa-solid fa-search text-muted"></i>
@@ -132,20 +136,28 @@
                     </form>
 
                     <div class="d-flex align-items-center">
-                        <% if (typeof user !== 'undefined' && user !== null && user.QuyenHan === 'admin') { %>
+                        <% if (user) { %>
                             <div class="text-end me-3">
-                                <span class="fw-bold text-secondary d-block" style="line-height: 1;">Chào, <%= user.HoVaTen %></span>
-                                <% if (typeof user !== 'undefined' && user !== null && user.QuyenHan === 'admin') { %>
+                                <span class="fw-bold text-secondary d-block" style="line-height: 1;">
+                                    Chào, <%= user.HoVaTen %>
+                                </span>
+                                <% if(user.QuyenHan==='admin' ) { %>
                                     <small class="badge bg-danger rounded-pill mt-1">Admin</small>
-                                <% } else { %>
-                                    <small class="badge bg-info text-dark rounded-pill mt-1">Nhân viên</small>
-                                <% } %>
+                                    <% } else { %>
+                                        <small class="badge bg-info text-dark rounded-pill mt-1">Nhân viên</small>
+                                        <% } %>
                             </div>
+
                             <img src="<%= user.HinhAnh ? user.HinhAnh : 'https://ui-avatars.com/api/?name=' + user.HoVaTen + '&background=0D8ABC&color=fff' %>"
-                                alt="Avatar" class="rounded-circle shadow-sm border" width="40" height="40" style="object-fit: cover;">
-                        <% } else { %>
-                            <a href="/dangnhap" class="btn btn-outline-primary rounded-pill btn-sm px-3">Đăng nhập</a>
-                        <% } %>
+                                alt="Avatar" class="rounded-circle shadow-sm border me-3" width="40" height="40">
+
+                            <a href="/dangxuat" class="btn btn-outline-danger rounded-pill btn-sm px-3">Đăng xuất</a>
+
+                            <% } else { %>
+                                <a href="/dangnhap" class="btn btn-primary rounded-pill btn-sm px-4 shadow-sm">
+                                    <i class="fa-solid fa-right-to-bracket me-1"></i> Đăng nhập
+                                </a>
+                                <% } %>
                     </div>
                 </div>
             </div>

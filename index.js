@@ -58,10 +58,7 @@ app.use('/donhang', require('./routers/donhang'));
 app.use('/khachhang', require('./routers/khachhang'));
 app.use('/thongke', require('./routers/thongke'));
 app.use('/taikhoan', taiKhoanRouter);
-app.use((req, res, next) => {
-    res.locals.user = req.session.user || null;
-    next();
-});
+
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {

@@ -77,26 +77,28 @@ router.get('/dangky', (req, res) => {
 
 router.post('/dangky', async (req, res) => {
     try {
+        // 1. Kiểm tra user tồn tại
         var checkUser = await TaiKhoan.findOne({ TenDangNhap: req.body.TenDangNhap });
         if (checkUser) {
             return res.render('dangky', { title: 'Đăng ký', error: 'Tên đăng nhập đã tồn tại!' });
         }
 
+        // 2. Mã hóa mật khẩu
         var salt = bcrypt.genSaltSync(10);
         var hashPassword = bcrypt.hashSync(req.body.MatKhau, salt);
 
-        // QUAN TRỌNG: Đăng ký tài khoản mặc định là 'staff'
+        // 3. Lưu vào Database (Lấy thêm QuyenHan từ form)
         await TaiKhoan.create({
             HoVaTen: req.body.HoVaTen,
             TenDangNhap: req.body.TenDangNhap,
             MatKhau: hashPassword,
-            QuyenHan: 'staff' 
+            QuyenHan: req.body.QuyenHan || 'staff' // Lấy từ form, mặc định là staff nếu trống
         });
 
         res.redirect('/dangnhap');
     } catch (error) {
         console.log(error);
-        res.render('dangky', { title: 'Đăng ký', error: 'Có lỗi xảy ra, vui lòng thử lại.' });
+        res.render('dangky', { title: 'Đăng ký', error: 'Có lỗi xảy ra!' });
     }
 });
 
@@ -123,8 +125,14 @@ router.post('/dangnhap', async (req, res) => {
 });
 
 router.get('/dangxuat', (req, res) => {
-    req.session.destroy(); 
-    res.redirect('/dangnhap');
+    req.session.destroy((err) => {
+        if(err) {
+            console.log(err);
+        }
+        // Xóa sạch cookie của session trên trình duyệt
+        res.clearCookie('connect.sid'); 
+        res.redirect('/dangnhap');
+    });
 });
 
 module.exports = router;
