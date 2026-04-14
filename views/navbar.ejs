@@ -107,13 +107,15 @@
                 <a href="/thongke"><i class="fa-solid fa-chart-line me-2"></i> Thống kê</a>
                 <% } %>
         </div>
-        <div class="mt-auto border-top border-secondary">
-            <% if (typeof user !=='undefined' && user !==null && user.QuyenHan==='admin' ) { %>
-                <a href="/dangxuat" class="text-danger"><i class="fa-solid fa-right-from-bracket me-2"></i> Đăng
-                    xuất</a>
+        <div class="sidebar-footer">
+            <% if (!user) { %>
+                <a href="/dangnhap" class="nav-link text-success">
+                    <i class="fa-solid fa-right-to-bracket me-2"></i> Đăng nhập
+                </a>
                 <% } else { %>
-                    <a href="/dangnhap" class="text-success"><i class="fa-solid fa-right-to-bracket me-2"></i> Đăng
-                        nhập</a>
+                    <a href="/dangxuat" class="nav-link text-danger">
+                        <i class="fa-solid fa-power-off me-2"></i> Thoát hệ thống
+                    </a>
                     <% } %>
         </div>
     </div>
