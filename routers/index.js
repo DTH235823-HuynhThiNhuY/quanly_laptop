@@ -5,7 +5,7 @@ var bcrypt = require('bcryptjs');
 
 // 1. GỌI THƯ VIỆN GOOGLE VÀ KHAI BÁO CLIENT ID
 const { OAuth2Client } = require('google-auth-library');
-// THAY CHUỖI BÊN DƯỚI BẰNG CLIENT ID BẠN COPY Ở BƯỚC 1
+//  CLIENT ID 
 const CLIENT_ID = '796125695190-1l4p5jcb38se4270dcvmfve1gvhonhf6.apps.googleusercontent.com'; 
 const client = new OAuth2Client(CLIENT_ID);
 // GET: Trang chủ tự động chuyển hướng

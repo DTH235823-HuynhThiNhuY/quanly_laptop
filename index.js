@@ -7,9 +7,9 @@ var DanhMuc = require('./models/danhmuc');
 var indexRouter = require('./routers/index');
 var danhmucRouter = require('./routers/danhmuc');
 var laptopRouter = require('./routers/laptop');
-// var taikhoanRouter = require('./routers/taikhoan'); // Mở comment khi bạn làm chức năng tài khoản
+// var taikhoanRouter = require('./routers/taikhoan'); 
 
-// Thay bằng chuỗi kết nối MongoDB Atlas của bạn
+//  chuỗi kết nối MongoDB Atlas 
 var uri = 'mongodb://NhuY:NhuY123@ac-f3kp8uj-shard-00-01.pcyfm5u.mongodb.net:27017/quanly_laptop?ssl=true&authSource=admin';
 mongoose.connect(uri)
     .then(async () => {
@@ -58,5 +58,5 @@ app.use('/khachhang', require('./routers/khachhang'));
 app.use('/thongke', require('./routers/thongke'));
 
 app.listen(3000, () => {
-    console.log('Server is running at http://127.0.0.1:3000');
+    console.log('Server is running at https://quanly-laptop.onrender.com');
 });

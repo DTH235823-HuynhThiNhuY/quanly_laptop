@@ -5,8 +5,8 @@ var taiKhoanSchema = new mongoose.Schema({
     Email: { type: String },
     HinhAnh: { type: String }, // Lưu ảnh đại diện từ Google
     TenDangNhap: { type: String, unique: true, required: true },
-    MatKhau: { type: String }, // ĐÃ BỎ 'required: true'
-    GoogleID: { type: String }, // BỔ SUNG 
+    MatKhau: { type: String }, 
+    GoogleID: { type: String }, 
     QuyenHan: { type: String, default: 'admin' },
     KichHoat: { type: Number, default: 1 }
 });
