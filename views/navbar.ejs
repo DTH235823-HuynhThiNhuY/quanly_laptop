@@ -104,6 +104,8 @@
             <a href="/khachhang"><i class="fa-solid fa-users me-2"></i> Khách hàng</a>
 
             <% if (typeof user !=='undefined' && user !==null && user.QuyenHan==='admin' ) { %>
+                <a href="/taikhoan"><i class="fa-solid fa-user-shield me-2"></i> Quản lý Nhân sự</a>
+
                 <a href="/thongke"><i class="fa-solid fa-chart-line me-2"></i> Thống kê</a>
                 <% } %>
         </div>
@@ -138,16 +140,15 @@
                     </form>
 
                     <div class="d-flex align-items-center">
-                        <% if (user) { %>
+                        <% if (typeof user !=='undefined' && user !==null) { %>
                             <div class="text-end me-3">
                                 <span class="fw-bold text-secondary d-block" style="line-height: 1;">
                                     Chào, <%= user.HoVaTen %>
                                 </span>
-                                <% if(user.QuyenHan==='admin' ) { %>
-                                    <small class="badge bg-danger rounded-pill mt-1">Admin</small>
-                                    <% } else { %>
-                                        <small class="badge bg-info text-dark rounded-pill mt-1">Nhân viên</small>
-                                        <% } %>
+                                <small
+                                    class="badge <%= user.QuyenHan === 'admin' ? 'bg-danger' : 'bg-info text-dark' %> rounded-pill mt-1">
+                                    <%= user.QuyenHan==='admin' ? 'Admin' : 'Nhân viên' %>
+                                </small>
                             </div>
 
                             <img src="<%= user.HinhAnh ? user.HinhAnh : 'https://ui-avatars.com/api/?name=' + user.HoVaTen + '&background=0D8ABC&color=fff' %>"
