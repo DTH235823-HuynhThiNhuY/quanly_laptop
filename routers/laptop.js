@@ -5,19 +5,21 @@ var DanhMuc = require('../models/danhmuc');
 
 // --- MIDDLEWARE KIỂM TRA QUYỀN ---
 const isAdmin = (req, res, next) => {
-    const user = req.session.user || req.user;
-    // Kiểm tra user tồn tại TRƯỚC KHI kiểm tra QuyenHan
-    if (user && user.QuyenHan === 'admin') {
+    // Kiểm tra an toàn: session tồn tại -> user tồn tại -> quyền là admin
+    if (req.session && req.session.user && req.session.user.QuyenHan === 'admin') {
         return next();
     }
-    res.status(403).send("Lỗi: Bạn không có quyền thực hiện hành động này!");
+    // Nếu không phải admin, không nên đứng im mà nên redirect hoặc báo lỗi nhẹ
+    res.redirect('/dangnhap'); 
 };
 
 // GET: Danh sách laptop
 router.get('/', async (req, res) => {
     try {
+        // 1. Lấy từ khóa tìm kiếm
         var keyword = req.query.q || '';
         var queryObj = {};
+        
         if (keyword) {
             queryObj = {
                 $or: [
@@ -27,25 +29,35 @@ router.get('/', async (req, res) => {
             };
         }
 
-        // POPULATE AN TOÀN: Thêm lean() để tăng tốc độ tải dữ liệu
-        var laptops = await Laptop.find(queryObj).populate('DanhMuc').lean();
-        var danhmucList = await DanhMuc.find().lean();
+        // 2. Truy vấn dữ liệu (Sử dụng .lean() để chuyển thành Object thuần giúp EJS đọc nhanh hơn)
+        // Cực kỳ quan trọng: Phải đảm bảo tên biến truyền sang res.render khớp với file EJS
+        var dsLaptops = await Laptop.find(queryObj).populate('DanhMuc').lean();
+        var dsDanhMuc = await DanhMuc.find().lean();
 
-        var tongLaptops = await Laptop.countDocuments(queryObj); 
-        var dangBan = await Laptop.countDocuments({ ...queryObj, SoLuong: { $gt: 0 } }); 
-        var sapHet = await Laptop.countDocuments({ ...queryObj, SoLuong: { $lt: 5, $gt: 0 } }); 
-        var hetHang = await Laptop.countDocuments({ ...queryObj, SoLuong: 0 }); 
+        // 3. Tính toán thống kê
+        const [tongLaptops, dangBan, sapHet, hetHang] = await Promise.all([
+            Laptop.countDocuments(queryObj),
+            Laptop.countDocuments({ ...queryObj, SoLuong: { $gt: 0 } }),
+            Laptop.countDocuments({ ...queryObj, SoLuong: { $lt: 5, $gt: 0 } }),
+            Laptop.countDocuments({ ...queryObj, SoLuong: 0 })
+        ]);
 
+        // 4. Render dữ liệu
         res.render('laptop', {
             title: 'Quản lý Sản phẩm',
-            laptops: laptops,
-            danhmucList: danhmucList,
+            laptops: dsLaptops, // Biến này dùng cho vòng lặp trong table
+            danhmucList: dsDanhMuc,
             stats: { tongLaptops, dangBan, sapHet, hetHang },
-            keyword: keyword 
+            keyword: keyword,
+            // Truyền trực tiếp user từ session sang để chắc chắn View có dữ liệu check quyền
+            user: req.session.user || null 
         });
+
     } catch (error) {
-        console.log("Lỗi tải trang laptop:", error);
-        res.status(500).send("Lỗi tải dữ liệu. Vui lòng kiểm tra kết nối Database!");
+        console.error("Lỗi chi tiết tại Route Laptop:", error);
+        res.status(500).render('error', { 
+            message: "Hệ thống không thể tải danh sách sản phẩm. Vui lòng kiểm tra lại Database!" 
+        });
     }
 });
 
