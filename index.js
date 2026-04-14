@@ -57,6 +57,8 @@ app.use('/donhang', require('./routers/donhang'));
 app.use('/khachhang', require('./routers/khachhang'));
 app.use('/thongke', require('./routers/thongke'));
 
-app.listen(3000, () => {
-    console.log('Server is running at https://quanly-laptop.onrender.com');
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+    console.log(`Server đang chạy thành công trên cổng ${PORT}`);
 });
