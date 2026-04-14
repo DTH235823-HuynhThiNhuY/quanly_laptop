@@ -103,12 +103,12 @@
             <a href="/donhang"><i class="fa-solid fa-cart-shopping me-2"></i> Đơn hàng</a>
             <a href="/khachhang"><i class="fa-solid fa-users me-2"></i> Khách hàng</a>
             
-            <% if (typeof user !== 'undefined' && user && user.QuyenHan === 'admin') { %>
+            <% if (typeof user !== 'undefined' && user !== null && user.QuyenHan === 'admin') { %>
                 <a href="/thongke"><i class="fa-solid fa-chart-line me-2"></i> Thống kê</a>
             <% } %>
         </div>
         <div class="mt-auto border-top border-secondary">
-            <% if(typeof user !== 'undefined' && user) { %>
+            <% if (typeof user !== 'undefined' && user !== null && user.QuyenHan === 'admin') { %>
                 <a href="/dangxuat" class="text-danger"><i class="fa-solid fa-right-from-bracket me-2"></i> Đăng xuất</a>
             <% } else { %>
                 <a href="/dangnhap" class="text-success"><i class="fa-solid fa-right-to-bracket me-2"></i> Đăng nhập</a>
@@ -132,10 +132,10 @@
                     </form>
 
                     <div class="d-flex align-items-center">
-                        <% if(typeof user !== 'undefined' && user) { %>
+                        <% if (typeof user !== 'undefined' && user !== null && user.QuyenHan === 'admin') { %>
                             <div class="text-end me-3">
                                 <span class="fw-bold text-secondary d-block" style="line-height: 1;">Chào, <%= user.HoVaTen %></span>
-                                <% if(user.QuyenHan === 'admin') { %>
+                                <% if (typeof user !== 'undefined' && user !== null && user.QuyenHan === 'admin') { %>
                                     <small class="badge bg-danger rounded-pill mt-1">Admin</small>
                                 <% } else { %>
                                     <small class="badge bg-info text-dark rounded-pill mt-1">Nhân viên</small>

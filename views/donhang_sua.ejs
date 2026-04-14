@@ -4,7 +4,7 @@
         <div class="card-body p-5">
             <h4 class="fw-bold mb-4 text-center text-primary">Cập nhật Đơn Hàng</h4>
 
-            <% if (typeof user !== 'undefined' && user.QuyenHan !== 'admin') { %>
+            <% if (typeof user !== 'undefined' && user !== null && user.QuyenHan === 'admin') { %>
                 <div class="alert alert-info py-2 mb-4" style="font-size: 0.9rem;">
                     <i class="fa-solid fa-circle-info me-1"></i> <strong>Quyền Nhân viên:</strong> Bạn chỉ được phép cập nhật Trạng thái giao hàng.
                 </div>

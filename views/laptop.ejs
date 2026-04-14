@@ -68,7 +68,7 @@
                 <% } %>
             </form>
 
-            <% if (typeof user !== 'undefined' && user.QuyenHan === 'admin') { %>
+            <% if (typeof user !== 'undefined' && user !== null && user.QuyenHan === 'admin') { %>
                 <button class="btn btn-primary rounded-pill px-4 shadow-sm" data-bs-toggle="modal" data-bs-target="#addLaptopModal">
                     <i class="fa-solid fa-plus me-1"></i> Thêm mới
                 </button>
@@ -83,7 +83,7 @@
                         <th>Sản phẩm</th>
                         <th>Thương hiệu</th>
                         
-                        <% if (typeof user !== 'undefined' && user.QuyenHan === 'admin') { %>
+                        <% if (typeof user !== 'undefined' && user !== null && user.QuyenHan === 'admin') { %>
                             <th>Giá nhập</th>
                         <% } %>
 
@@ -94,7 +94,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <% if (typeof laptops !== 'undefined' && laptops.length === 0) { %>
+                    <% if (typeof user !== 'undefined' && user !== null && user.QuyenHan === 'admin') { %>
                         <tr>
                             <td colspan="<%= (typeof user !== 'undefined' && user.QuyenHan === 'admin') ? 8 : 7 %>" class="text-center py-5 text-muted">
                                 <i class="fa-solid fa-box-open fa-3x mb-3 text-secondary opacity-50"></i>
@@ -129,7 +129,7 @@
                                 </td>
                                 <td><%= sp.DanhMuc ? sp.DanhMuc.TenDanhMuc : 'Khác' %></td>
                                 
-                                <% if (typeof user !== 'undefined' && user.QuyenHan === 'admin') { %>
+                                <% if (typeof user !== 'undefined' && user !== null && user.QuyenHan === 'admin') { %>
                                     <td><%= sp.GiaNhap.toLocaleString('vi-VN') %> ₫</td>
                                 <% } %>
 
@@ -149,7 +149,7 @@
                                         <i class="fa-solid fa-pen"></i>
                                     </a>
                                     
-                                    <% if (typeof user !== 'undefined' && user.QuyenHan === 'admin') { %>
+                                    <% if (typeof user !== 'undefined' && user !== null && user.QuyenHan === 'admin') { %>
                                         <a href="/laptop/xoa/<%= sp._id %>" class="btn btn-sm btn-outline-danger action-btn"
                                             onclick="return confirm('Bạn có chắc muốn xóa laptop này?');">
                                             <i class="fa-solid fa-trash"></i>
@@ -190,7 +190,7 @@
         </div>
     </div>
     
-<% if (typeof user !== 'undefined' && user.QuyenHan === 'admin') { %>
+<% if (typeof user !== 'undefined' && user !== null && user.QuyenHan === 'admin') { %>
     <div class="modal fade" id="addLaptopModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content border-0 shadow">

@@ -43,10 +43,10 @@
             
             <div class="text-end d-flex justify-content-end align-items-center">
                 <a href="/khachhang" class="btn btn-light px-4 me-2">
-                    <%= (typeof user !== 'undefined' && user.QuyenHan === 'admin') ? 'Hủy bỏ' : 'Đóng' %>
+                    <%= (typeof user !== 'undefined' && user !== null && user.QuyenHan === 'admin') ? 'Hủy bỏ' : 'Đóng' %>
                 </a>
                 
-                <% if (typeof user !== 'undefined' && user.QuyenHan === 'admin') { %>
+                <% if (typeof user !== 'undefined' && user !== null && user.QuyenHan === 'admin') { %>
                     <button type="submit" class="btn btn-primary px-4"><i class="fa-solid fa-save me-2"></i>Lưu thay đổi</button>
                 <% } else { %>
                     <span class="text-danger fst-italic small"><i class="fa-solid fa-lock me-1"></i> Chỉ Admin mới có quyền sửa đổi thông tin khách</span>

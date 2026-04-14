@@ -42,7 +42,7 @@
                         <td class="text-center">
                             <a href="/donhang/sua/<%= dh._id %>" class="btn btn-sm btn-outline-info action-btn"><i class="fa-solid fa-pen"></i></a>
                             
-                            <% if (typeof user !== 'undefined' && user.QuyenHan === 'admin') { %>
+                            <% if (typeof user !== 'undefined' && user !== null && user.QuyenHan === 'admin') { %>
                                 <a href="/donhang/xoa/<%= dh._id %>" class="btn btn-sm btn-outline-danger action-btn" onclick="return confirm('Bạn có chắc muốn xóa đơn hàng này?');"><i class="fa-solid fa-trash"></i></a>
                             <% } %>
                         </td>
