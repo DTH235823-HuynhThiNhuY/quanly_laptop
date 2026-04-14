@@ -4,7 +4,20 @@ var Laptop = require('../models/laptop');
 var DonHang = require('../models/donhang');
 var KhachHang = require('../models/khachhang');
 
-router.get('/', async (req, res) => {
+// --- MIDDLEWARE KIỂM TRA QUYỀN ADMIN ---
+const isAdmin = (req, res, next) => {
+    // Kiểm tra session user
+    const user = req.session.user || req.user;
+    if (user && user.QuyenHan === 'admin') {
+        return next();
+    }
+    // Nếu không phải admin, chặn đứng và báo lỗi
+    res.status(403).send("Lỗi: Bạn không có quyền truy cập vào khu vực báo cáo doanh thu!");
+};
+
+// Áp dụng isAdmin cho toàn bộ các route trong file này
+
+router.get('/', isAdmin, async (req, res) => {
     try {
         // 1. Đếm tổng số lượng mẫu mã laptop
         var tongSoMauLaptop = await Laptop.countDocuments();

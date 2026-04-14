@@ -2,7 +2,18 @@ var express = require('express');
 var router = express.Router();
 var DanhMuc = require('../models/danhmuc');
 
-// GET: Giao diện danh sách hãng
+// ---  MIDDLEWARE KIỂM TRA QUYỀN ---
+const isAdmin = (req, res, next) => {
+
+    const user = req.user || req.session.user;
+    
+    if (user && user.QuyenHan === 'admin') {
+        return next();
+    }
+    res.status(403).send("Lỗi: Bạn không có quyền thực hiện hành động này!");
+};
+
+// GET: Giao diện danh sách hãng (AI CŨNG XEM ĐƯỢC)
 router.get('/', async (req, res) => {
     try {
         var dsDanhMuc = await DanhMuc.find();
@@ -16,8 +27,8 @@ router.get('/', async (req, res) => {
     }
 });
 
-// POST: Thêm hãng mới (từ Modal)
-router.post('/them', async (req, res) => {
+// POST: Thêm hãng mới (CHỈ ADMIN)
+router.post('/them', isAdmin, async (req, res) => {
     try {
         await DanhMuc.create({ TenDanhMuc: req.body.TenDanhMuc });
         res.redirect('/danhmuc');
@@ -27,7 +38,7 @@ router.post('/them', async (req, res) => {
     }
 });
 
-// GET: Giao diện sửa hãng
+// GET: Giao diện sửa hãng (MỞ CHO CẢ 2 - Nhưng bên EJS đã khóa ô nhập của Staff)
 router.get('/sua/:id', async (req, res) => {
     try {
         var dm = await DanhMuc.findById(req.params.id);
@@ -41,8 +52,8 @@ router.get('/sua/:id', async (req, res) => {
     }
 });
 
-// POST: Lưu thông tin sửa
-router.post('/sua/:id', async (req, res) => {
+// POST: Lưu thông tin sửa (CHỈ ADMIN)
+router.post('/sua/:id', isAdmin, async (req, res) => {
     try {
         await DanhMuc.findByIdAndUpdate(req.params.id, { TenDanhMuc: req.body.TenDanhMuc });
         res.redirect('/danhmuc');
@@ -52,9 +63,10 @@ router.post('/sua/:id', async (req, res) => {
     }
 });
 
-// GET: Xóa hãng
-router.get('/xoa/:id', async (req, res) => {
+// GET: Xóa hãng (CHỈ ADMIN)
+router.get('/xoa/:id', isAdmin, async (req, res) => {
     try {
+        // check xem hãng này có đang chứa Laptop nào không trước khi xóa
         await DanhMuc.findByIdAndDelete(req.params.id);
         res.redirect('/danhmuc');
     } catch (error) {

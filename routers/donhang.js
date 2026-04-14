@@ -3,9 +3,17 @@ var router = express.Router();
 var DonHang = require('../models/donhang');
 var Laptop = require('../models/laptop');
 
+// --- MIDDLEWARE KIỂM TRA QUYỀN ADMIN ---
+const isAdmin = (req, res, next) => {
+    const user = req.user || req.session.user;
+    if (user && user.QuyenHan === 'admin') {
+        return next();
+    }
+    res.status(403).send("Lỗi: Bạn không có quyền thực hiện hành động này!");
+};
 
 // =======================
-// GET: Danh sách đơn hàng
+// GET: Danh sách đơn hàng (TẤT CẢ QUYỀN)
 // =======================
 router.get('/', async (req, res) => {
     try {
@@ -26,9 +34,8 @@ router.get('/', async (req, res) => {
     }
 });
 
-
 // =======================
-// POST: Thêm đơn hàng
+// POST: Thêm đơn hàng (TẤT CẢ QUYỀN - Staff được quyền lên đơn)
 // =======================
 router.post('/them', async (req, res) => {
     try {
@@ -38,7 +45,6 @@ router.post('/them', async (req, res) => {
         var qty = parseInt(req.body.SoLuong);
         if (!qty || qty <= 0) return res.send("Số lượng không hợp lệ!");
 
-        // Không cho âm kho
         if (laptop.SoLuong < qty) {
             return res.send("Không đủ hàng trong kho!");
         }
@@ -55,21 +61,18 @@ router.post('/them', async (req, res) => {
             TrangThai: req.body.TrangThai || "Chờ xác nhận"
         });
 
-        // Trừ kho
         laptop.SoLuong -= qty;
         await laptop.save();
 
         res.redirect('/donhang');
-
     } catch (error) {
         console.log(error);
         res.send("Lỗi thêm đơn!");
     }
 });
 
-
 // =======================
-// GET: Form sửa
+// GET: Form sửa (TẤT CẢ QUYỀN - Vào để xem hoặc đổi trạng thái)
 // =======================
 router.get('/sua/:id', async (req, res) => {
     try {
@@ -80,20 +83,19 @@ router.get('/sua/:id', async (req, res) => {
             title: 'Cập nhật đơn hàng',
             donhang: dh
         });
-
     } catch (error) {
         console.log(error);
         res.send("Lỗi!");
     }
 });
 
-
 // =======================
-// POST: Sửa đơn hàng
+// POST: Sửa đơn hàng (PHÂN QUYỀN NỘI BỘ)
 // =======================
 router.post('/sua/:id', async (req, res) => {
     try {
         var id = req.params.id;
+        var user = req.user || req.session.user;
 
         var oldOrder = await DonHang.findById(id);
         if (!oldOrder) return res.send("Không tìm thấy đơn!");
@@ -101,53 +103,41 @@ router.post('/sua/:id', async (req, res) => {
         var laptop = await Laptop.findById(oldOrder.Laptop);
         if (!laptop) return res.send("Không tìm thấy sản phẩm!");
 
-        //  Lấy số lượng mới 
-        var newQty = req.body.SoLuong 
-            ? parseInt(req.body.SoLuong) 
-            : oldOrder.SoLuong;
-
-        if (!newQty || newQty <= 0) {
-            return res.send("Số lượng không hợp lệ!");
+        // --- LOGIC PHÂN QUYỀN SỬA SỐ LƯỢNG ---
+        var newQty;
+        if (user && user.QuyenHan === 'admin') {
+            // Admin: Được lấy số lượng từ form
+            newQty = req.body.SoLuong ? parseInt(req.body.SoLuong) : oldOrder.SoLuong;
+        } else {
+            // Staff: Ép buộc dùng lại số lượng cũ, phớt lờ input từ form
+            newQty = oldOrder.SoLuong;
         }
+
+        if (!newQty || newQty <= 0) return res.send("Số lượng không hợp lệ!");
 
         var newStatus = req.body.TrangThai || oldOrder.TrangThai;
 
-        //  Chuẩn hóa trạng thái
+        // Xử lý logic hoàn kho/trừ kho dựa trên trạng thái 
         var oldStatus = oldOrder.TrangThai.toLowerCase();
         var newStatusStr = newStatus.toLowerCase();
-
         var isOldCancel = oldStatus.includes('đã hủy') || oldStatus.includes('đã huỷ');
         var isNewCancel = newStatusStr.includes('đã hủy') || newStatusStr.includes('đã huỷ');
 
-        //  Tính ảnh hưởng kho
         var oldQtyEffect = isOldCancel ? 0 : oldOrder.SoLuong;
         var newQtyEffect = isNewCancel ? 0 : newQty;
-
         var diff = newQtyEffect - oldQtyEffect;
 
-        console.log("====== DEBUG ======");
-        console.log("OLD:", oldQtyEffect);
-        console.log("NEW:", newQtyEffect);
-        console.log("DIFF:", diff);
-        console.log("KHO TRƯỚC:", laptop.SoLuong);
-
-        //  Check kho
         if (diff > 0 && laptop.SoLuong < diff) {
             return res.send("Không đủ hàng trong kho!");
         }
 
-        //  UPDATE KHO 
         if (diff !== 0) {
-            laptop.SoLuong = laptop.SoLuong - diff;
+            laptop.SoLuong -= diff;
             await laptop.save();
         }
 
-        console.log("KHO SAU:", laptop.SoLuong);
-
-        //  Tính lại tiền
         var tongTien = newQty * laptop.GiaBan;
 
-        // Update đơn
         await DonHang.findByIdAndUpdate(id, {
             TenKhachHang: req.body.TenKhachHang || oldOrder.TenKhachHang,
             SoDienThoai: req.body.SoDienThoai || oldOrder.SoDienThoai,
@@ -158,42 +148,35 @@ router.post('/sua/:id', async (req, res) => {
         });
 
         res.redirect('/donhang');
-
     } catch (error) {
         console.log(error);
         res.send("Lỗi cập nhật!");
     }
 });
 
-
 // =======================
-// GET: Xóa đơn hàng
+// GET: Xóa đơn hàng (CHỈ ADMIN)
 // =======================
-router.get('/xoa/:id', async (req, res) => {
+router.get('/xoa/:id', isAdmin, async (req, res) => {
     try {
         var order = await DonHang.findById(req.params.id);
         if (!order) return res.redirect('/donhang');
 
         var laptop = await Laptop.findById(order.Laptop);
-
         var status = order.TrangThai.toLowerCase();
         var isCancel = status.includes('đã hủy') || status.includes('đã huỷ');
 
-        //  Chỉ hoàn kho nếu chưa hủy
         if (!isCancel && laptop) {
             laptop.SoLuong += order.SoLuong;
             await laptop.save();
         }
 
         await DonHang.findByIdAndDelete(order._id);
-
         res.redirect('/donhang');
-
     } catch (error) {
         console.log(error);
         res.send("Lỗi xóa!");
     }
 });
-
 
 module.exports = router;

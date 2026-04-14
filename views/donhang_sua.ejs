@@ -4,6 +4,12 @@
         <div class="card-body p-5">
             <h4 class="fw-bold mb-4 text-center text-primary">Cập nhật Đơn Hàng</h4>
 
+            <% if (typeof user !== 'undefined' && user.QuyenHan !== 'admin') { %>
+                <div class="alert alert-info py-2 mb-4" style="font-size: 0.9rem;">
+                    <i class="fa-solid fa-circle-info me-1"></i> <strong>Quyền Nhân viên:</strong> Bạn chỉ được phép cập nhật Trạng thái giao hàng.
+                </div>
+            <% } %>
+
             <div class="mb-4 p-3 bg-light rounded">
                 <p class="mb-1"><strong>Khách hàng:</strong>
                     <%= donhang.TenKhachHang %> - <%= donhang.SoDienThoai %>
@@ -24,7 +30,9 @@
                 
                 <div class="mb-3">
                     <label class="form-label fw-bold text-dark">Số lượng sản phẩm</label>
-                    <input type="number" class="form-control" name="SoLuong" value="<%= donhang.SoLuong %>" min="1" required>
+                    <input type="number" class="form-control <%= (typeof user !== 'undefined' && user.QuyenHan !== 'admin') ? 'bg-light text-muted' : '' %>" 
+                        name="SoLuong" value="<%= donhang.SoLuong %>" min="1" 
+                        <%= (typeof user !== 'undefined' && user.QuyenHan === 'admin') ? '' : 'readonly' %> required>
                 </div>
 
                 <div class="mb-4">

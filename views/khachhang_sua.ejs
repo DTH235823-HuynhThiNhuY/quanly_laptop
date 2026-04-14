@@ -10,30 +10,47 @@
         <form action="/khachhang/sua/<%= khachhang._id %>" method="POST">
             <div class="mb-3">
                 <label class="form-label fw-bold">Họ và tên</label>
-                <input type="text" class="form-control bg-light" name="HoTen" value="<%= khachhang.HoTen %>" required>
+                <input type="text" class="form-control <%= (typeof user !== 'undefined' && user.QuyenHan !== 'admin') ? 'bg-light text-muted' : 'bg-light' %>" 
+                       name="HoTen" value="<%= khachhang.HoTen %>" 
+                       <%= (typeof user !== 'undefined' && user.QuyenHan === 'admin') ? '' : 'readonly' %> required>
             </div>
             <div class="mb-3">
                 <label class="form-label fw-bold">Số điện thoại</label>
-                <input type="text" class="form-control bg-light" name="SoDienThoai" value="<%= khachhang.SoDienThoai %>" required>
+                <input type="text" class="form-control <%= (typeof user !== 'undefined' && user.QuyenHan !== 'admin') ? 'bg-light text-muted' : 'bg-light' %>" 
+                       name="SoDienThoai" value="<%= khachhang.SoDienThoai %>" 
+                       <%= (typeof user !== 'undefined' && user.QuyenHan === 'admin') ? '' : 'readonly' %> required>
             </div>
             <div class="mb-3">
                 <label class="form-label fw-bold">Email</label>
-                <input type="email" class="form-control bg-light" name="Email" value="<%= khachhang.Email %>">
+                <input type="email" class="form-control <%= (typeof user !== 'undefined' && user.QuyenHan !== 'admin') ? 'bg-light text-muted' : 'bg-light' %>" 
+                       name="Email" value="<%= khachhang.Email %>"
+                       <%= (typeof user !== 'undefined' && user.QuyenHan === 'admin') ? '' : 'readonly' %>>
             </div>
             <div class="mb-3">
                 <label class="form-label fw-bold">Địa chỉ</label>
-                <input type="text" class="form-control bg-light" name="DiaChi" value="<%= khachhang.DiaChi %>">
+                <input type="text" class="form-control <%= (typeof user !== 'undefined' && user.QuyenHan !== 'admin') ? 'bg-light text-muted' : 'bg-light' %>" 
+                       name="DiaChi" value="<%= khachhang.DiaChi %>"
+                       <%= (typeof user !== 'undefined' && user.QuyenHan === 'admin') ? '' : 'readonly' %>>
             </div>
             <div class="mb-4">
                 <label class="form-label fw-bold">Ghi chú</label>
-                <textarea class="form-control bg-light" name="GhiChu" rows="3"><%= khachhang.GhiChu %></textarea>
+                <textarea class="form-control <%= (typeof user !== 'undefined' && user.QuyenHan !== 'admin') ? 'bg-light text-muted' : 'bg-light' %>" 
+                          name="GhiChu" rows="3" 
+                          <%= (typeof user !== 'undefined' && user.QuyenHan === 'admin') ? '' : 'readonly' %>><%= khachhang.GhiChu %></textarea>
             </div>
             
             <hr class="my-4 border-secondary opacity-25">
             
-            <div class="text-end">
-                <a href="/khachhang" class="btn btn-light px-4 me-2">Hủy bỏ</a>
-                <button type="submit" class="btn btn-primary px-4"><i class="fa-solid fa-save me-2"></i>Lưu thay đổi</button>
+            <div class="text-end d-flex justify-content-end align-items-center">
+                <a href="/khachhang" class="btn btn-light px-4 me-2">
+                    <%= (typeof user !== 'undefined' && user.QuyenHan === 'admin') ? 'Hủy bỏ' : 'Đóng' %>
+                </a>
+                
+                <% if (typeof user !== 'undefined' && user.QuyenHan === 'admin') { %>
+                    <button type="submit" class="btn btn-primary px-4"><i class="fa-solid fa-save me-2"></i>Lưu thay đổi</button>
+                <% } else { %>
+                    <span class="text-danger fst-italic small"><i class="fa-solid fa-lock me-1"></i> Chỉ Admin mới có quyền sửa đổi thông tin khách</span>
+                <% } %>
             </div>
         </form>
     </div>

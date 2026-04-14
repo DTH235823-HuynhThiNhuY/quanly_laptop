@@ -2,7 +2,19 @@ var express = require('express');
 var router = express.Router();
 var KhachHang = require('../models/khachhang');
 
-// GET: Danh sách khách hàng
+// --- MIDDLEWARE KIỂM TRA QUYỀN ADMIN ---
+const isAdmin = (req, res, next) => {
+    // Ưu tiên check req.session.user vì đang dùng Session cho Google Login
+    const user = req.session.user || req.user;
+    if (user && user.QuyenHan === 'admin') {
+        return next();
+    }
+    res.status(403).send("Lỗi: Bạn không có quyền thực hiện hành động này!");
+};
+
+// ==========================================
+// GET: Danh sách khách hàng (AI CŨNG XEM ĐƯỢC)
+// ==========================================
 router.get('/', async (req, res) => {
     try {
         var dsKhachHang = await KhachHang.find().sort({ NgayTao: -1 });
@@ -16,7 +28,9 @@ router.get('/', async (req, res) => {
     }
 });
 
-// POST: Thêm khách hàng mới
+// ==========================================
+// POST: Thêm khách hàng mới (TẤT CẢ QUYỀN - Staff cần thêm khách khi lên đơn)
+// ==========================================
 router.post('/them', async (req, res) => {
     try {
         await KhachHang.create({
@@ -33,7 +47,9 @@ router.post('/them', async (req, res) => {
     }
 });
 
-// GET: Giao diện sửa thông tin khách hàng
+// ==========================================
+// GET: Giao diện sửa (MỞ CHO CẢ 2 - Nhưng Staff sẽ bị khóa ô nhập ở EJS)
+// ==========================================
 router.get('/sua/:id', async (req, res) => {
     try {
         var kh = await KhachHang.findById(req.params.id);
@@ -47,8 +63,10 @@ router.get('/sua/:id', async (req, res) => {
     }
 });
 
-// POST: Cập nhật thông tin
-router.post('/sua/:id', async (req, res) => {
+// ==========================================
+// POST: Cập nhật thông tin (CHỈ ADMIN)
+// ==========================================
+router.post('/sua/:id', isAdmin, async (req, res) => {
     try {
         await KhachHang.findByIdAndUpdate(req.params.id, {
             HoTen: req.body.HoTen,
@@ -64,8 +82,10 @@ router.post('/sua/:id', async (req, res) => {
     }
 });
 
-// GET: Xóa khách hàng
-router.get('/xoa/:id', async (req, res) => {
+// ==========================================
+// GET: Xóa khách hàng (CHỈ ADMIN)
+// ==========================================
+router.get('/xoa/:id', isAdmin, async (req, res) => {
     try {
         await KhachHang.findByIdAndDelete(req.params.id);
         res.redirect('/khachhang');

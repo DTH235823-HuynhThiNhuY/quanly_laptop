@@ -7,7 +7,8 @@ var DanhMuc = require('./models/danhmuc');
 var indexRouter = require('./routers/index');
 var danhmucRouter = require('./routers/danhmuc');
 var laptopRouter = require('./routers/laptop');
-// var taikhoanRouter = require('./routers/taikhoan'); 
+var taiKhoanRouter = require('./routers/taikhoan');
+
 
 //  chuỗi kết nối MongoDB Atlas 
 var uri = 'mongodb://NhuY:NhuY123@ac-f3kp8uj-shard-00-01.pcyfm5u.mongodb.net:27017/quanly_laptop?ssl=true&authSource=admin';
@@ -56,6 +57,7 @@ app.use('/laptop', laptopRouter);
 app.use('/donhang', require('./routers/donhang'));
 app.use('/khachhang', require('./routers/khachhang'));
 app.use('/thongke', require('./routers/thongke'));
+app.use('/taikhoan', taiKhoanRouter);
 
 const PORT = process.env.PORT || 3000;
 

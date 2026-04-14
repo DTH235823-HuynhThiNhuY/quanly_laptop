@@ -3,28 +3,33 @@ var router = express.Router();
 var Laptop = require('../models/laptop');
 var DanhMuc = require('../models/danhmuc');
 
-// GET: Danh sách laptop (Có tích hợp Tìm kiếm)
+// --- MIDDLEWARE KIỂM TRA QUYỀN ---
+const isAdmin = (req, res, next) => {
+    // Ưu tiên check req.session.user vì đang dùng Session cho Google Login
+    const user = req.session.user || req.user;
+    if (user && user.QuyenHan === 'admin') {
+        return next();
+    }
+    res.status(403).send("Lỗi: Bạn không có quyền thực hiện hành động này!");
+};
+
+// GET: Danh sách laptop (AI CŨNG XEM ĐƯỢC)
 router.get('/', async (req, res) => {
     try {
-        // 1. Nhận từ khóa từ thanh tìm kiếm (nếu có)
         var keyword = req.query.q || '';
-        
-        // 2. Xây dựng điều kiện tìm kiếm
         var queryObj = {};
         if (keyword) {
             queryObj = {
                 $or: [
-                    { TenLaptop: { $regex: keyword, $options: 'i' } }, // 'i' là không phân biệt hoa thường
+                    { TenLaptop: { $regex: keyword, $options: 'i' } },
                     { CauHinh: { $regex: keyword, $options: 'i' } }
                 ]
             };
         }
 
-        // 3. Truy vấn dữ liệu theo điều kiện
         var laptops = await Laptop.find(queryObj).populate('DanhMuc');
         var danhmucList = await DanhMuc.find();
 
-        // 4. Các con số thống kê (Giữ nguyên như cũ)
         var tongLaptops = await Laptop.countDocuments(queryObj); 
         var dangBan = await Laptop.countDocuments({ ...queryObj, SoLuong: { $gt: 0 } }); 
         var sapHet = await Laptop.countDocuments({ ...queryObj, SoLuong: { $lt: 5, $gt: 0 } }); 
@@ -35,7 +40,7 @@ router.get('/', async (req, res) => {
             laptops: laptops,
             danhmucList: danhmucList,
             stats: { tongLaptops, dangBan, sapHet, hetHang },
-            keyword: keyword // Truyền từ khóa ngược lại View để giữ chữ trên ô tìm kiếm
+            keyword: keyword 
         });
     } catch (error) {
         console.log(error);
@@ -43,8 +48,8 @@ router.get('/', async (req, res) => {
     }
 });
 
-// POST: Thêm laptop mới
-router.post('/them', async (req, res) => {
+// POST: Thêm laptop mới (CHỈ ADMIN)
+router.post('/them', isAdmin, async (req, res) => {
     try {
         var data = {
             TenLaptop: req.body.TenLaptop,
@@ -59,26 +64,25 @@ router.post('/them', async (req, res) => {
         res.redirect('/laptop');
     } catch (error) {
         console.log(error);
+        res.send("Lỗi khi thêm sản phẩm!");
     }
 });
 
-// GET: Xóa laptop
-router.get('/xoa/:id', async (req, res) => {
+// GET: Xóa laptop (CHỈ ADMIN)
+router.get('/xoa/:id', isAdmin, async (req, res) => {
     try {
-        var id = req.params.id;
-        await Laptop.findByIdAndDelete(id);
+        await Laptop.findByIdAndDelete(req.params.id);
         res.redirect('/laptop');
     } catch (error) {
         console.log(error);
+        res.send("Lỗi khi xóa!");
     }
 });
-// GET: Lấy thông tin laptop cũ và hiển thị Form Sửa
+
+// GET: Giao diện sửa (MỞ CHO CẢ 2 - Nhưng EJS sẽ khóa ô nhập của Staff)
 router.get('/sua/:id', async (req, res) => {
     try {
-        var id = req.params.id;
-        // Lấy thông tin laptop cần sửa
-        var lt = await Laptop.findById(id); 
-        // Lấy danh sách danh mục để đổ vào thẻ <select>
+        var lt = await Laptop.findById(req.params.id); 
         var dsDanhMuc = await DanhMuc.find(); 
 
         res.render('laptop_sua', {
@@ -92,28 +96,44 @@ router.get('/sua/:id', async (req, res) => {
     }
 });
 
-// POST: Nhận dữ liệu từ Form và cập nhật vào Database
+// POST: Cập nhật dữ liệu (PHÂN QUYỀN NỘI BỘ)
 router.post('/sua/:id', async (req, res) => {
     try {
         var id = req.params.id;
-        var data = {
-            TenLaptop: req.body.TenLaptop,
-            DanhMuc: req.body.DanhMuc,
-            GiaNhap: req.body.GiaNhap,
-            GiaBan: req.body.GiaBan,
-            SoLuong: req.body.SoLuong,
-            CauHinh: req.body.CauHinh,
-            HinhAnh: req.body.HinhAnh
-        };
+        var user = req.session.user || req.user;
+        var oldLaptop = await Laptop.findById(id);
+
+        var data;
+        if (user && user.QuyenHan === 'admin') {
+            // ADMIN: Cập nhật mọi thứ
+            data = {
+                TenLaptop: req.body.TenLaptop,
+                DanhMuc: req.body.DanhMuc,
+                GiaNhap: req.body.GiaNhap,
+                GiaBan: req.body.GiaBan,
+                SoLuong: req.body.SoLuong,
+                CauHinh: req.body.CauHinh,
+                HinhAnh: req.body.HinhAnh
+            };
+        } else {
+            // STAFF: Chỉ cho phép cập nhật Số lượng, các trường khác giữ nguyên từ DB
+            data = {
+                TenLaptop: oldLaptop.TenLaptop,
+                DanhMuc: oldLaptop.DanhMuc,
+                GiaNhap: oldLaptop.GiaNhap,
+                GiaBan: oldLaptop.GiaBan,
+                SoLuong: req.body.SoLuong, // Trường duy nhất được phép đổi
+                CauHinh: oldLaptop.CauHinh,
+                HinhAnh: oldLaptop.HinhAnh
+            };
+        }
         
-        // Cập nhật dữ liệu mới vào DB
         await Laptop.findByIdAndUpdate(id, data); 
-        
-        // Cập nhật xong thì quay về trang danh sách
         res.redirect('/laptop'); 
     } catch (error) {
         console.log(error);
         res.send("Lỗi khi cập nhật!");
     }
 });
+
 module.exports = router;

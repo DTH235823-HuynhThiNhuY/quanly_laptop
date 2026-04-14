@@ -3,6 +3,7 @@
 <div class="table-wrapper mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h5 class="fw-bold mb-0 text-secondary"><i class="fa-solid fa-cart-shopping me-2"></i>Danh sách Đơn hàng</h5>
+        
         <button class="btn btn-primary rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#addOrderModal">
             <i class="fa-solid fa-plus me-1"></i> Tạo Đơn Mới
         </button>
@@ -40,7 +41,10 @@
                         </td>
                         <td class="text-center">
                             <a href="/donhang/sua/<%= dh._id %>" class="btn btn-sm btn-outline-info action-btn"><i class="fa-solid fa-pen"></i></a>
-                            <a href="/donhang/xoa/<%= dh._id %>" class="btn btn-sm btn-outline-danger action-btn" onclick="return confirm('Bạn có chắc muốn xóa đơn hàng này?');"><i class="fa-solid fa-trash"></i></a>
+                            
+                            <% if (typeof user !== 'undefined' && user.QuyenHan === 'admin') { %>
+                                <a href="/donhang/xoa/<%= dh._id %>" class="btn btn-sm btn-outline-danger action-btn" onclick="return confirm('Bạn có chắc muốn xóa đơn hàng này?');"><i class="fa-solid fa-trash"></i></a>
+                            <% } %>
                         </td>
                     </tr>
                 <% }) %>
