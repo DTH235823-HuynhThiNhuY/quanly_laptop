@@ -1,80 +1,91 @@
 <%- include('navbar') %>
 
     <div class="row mb-4 mt-4">
-            <div class="col-md-3">
-                <div class="card card-stat bg-primary text-white">
-                    <div class="card-body d-flex justify-content-between align-items-center">
-                        <div>
-                            <h6 class="card-title">Tổng Laptops</h6>
-                            <h3 class="mb-0"><%= stats.tongLaptops %></h3>
-                        </div>
-                        <i class="fa-solid fa-laptop fa-2x opacity-50"></i>
+        <div class="col-md-3">
+            <div class="card card-stat bg-primary text-white">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title">Tổng Laptops</h6>
+                        <h3 class="mb-0">
+                            <%= stats.tongLaptops %>
+                        </h3>
                     </div>
-                </div>
-            </div>
-            
-            <div class="col-md-3">
-                <div class="card card-stat bg-success text-white">
-                    <div class="card-body d-flex justify-content-between align-items-center">
-                        <div>
-                            <h6 class="card-title">Đang bán</h6>
-                            <h3 class="mb-0"><%= stats.dangBan %></h3>
-                        </div>
-                        <i class="fa-solid fa-check-circle fa-2x opacity-50"></i>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col-md-3">
-                <div class="card card-stat bg-warning text-dark">
-                    <div class="card-body d-flex justify-content-between align-items-center">
-                        <div>
-                            <h6 class="card-title">Sắp hết hàng</h6>
-                            <h3 class="mb-0"><%= stats.sapHet %></h3>
-                        </div>
-                        <i class="fa-solid fa-triangle-exclamation fa-2x opacity-50"></i>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col-md-3">
-                <div class="card card-stat bg-danger text-white">
-                    <div class="card-body d-flex justify-content-between align-items-center">
-                        <div>
-                            <h6 class="card-title">Hết hàng</h6>
-                            <h3 class="mb-0"><%= stats.hetHang %></h3>
-                        </div>
-                        <i class="fa-solid fa-box-open fa-2x opacity-50"></i>
-                    </div>
+                    <i class="fa-solid fa-laptop fa-2x opacity-50"></i>
                 </div>
             </div>
         </div>
+
+        <div class="col-md-3">
+            <div class="card card-stat bg-success text-white">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title">Đang bán</h6>
+                        <h3 class="mb-0">
+                            <%= stats.dangBan %>
+                        </h3>
+                    </div>
+                    <i class="fa-solid fa-check-circle fa-2x opacity-50"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card card-stat bg-warning text-dark">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title">Sắp hết hàng</h6>
+                        <h3 class="mb-0">
+                            <%= stats.sapHet %>
+                        </h3>
+                    </div>
+                    <i class="fa-solid fa-triangle-exclamation fa-2x opacity-50"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card card-stat bg-danger text-white">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title">Hết hàng</h6>
+                        <h3 class="mb-0">
+                            <%= stats.hetHang %>
+                        </h3>
+                    </div>
+                    <i class="fa-solid fa-box-open fa-2x opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="table-wrapper">
         <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
             <h5 class="fw-bold mb-0">Danh sách Laptop</h5>
-            
-            <form action="/laptop" method="GET" class="d-flex align-items-center bg-white border rounded-pill px-2 py-1 shadow-sm flex-grow-1 mx-md-4" style="max-width: 400px;">
+
+            <form action="/laptop" method="GET"
+                class="d-flex align-items-center bg-white border rounded-pill px-2 py-1 shadow-sm flex-grow-1 mx-md-4"
+                style="max-width: 400px;">
                 <button type="submit" class="btn border-0 text-secondary p-1">
                     <i class="fa-solid fa-magnifying-glass"></i>
                 </button>
-                <input type="text" name="q" class="form-control border-0 shadow-none bg-transparent px-2" 
-                       placeholder="Tìm theo tên máy hoặc cấu hình..." 
-                       value="<%= typeof keyword !== 'undefined' ? keyword : '' %>">
-                <% if (typeof keyword !== 'undefined' && keyword !== '') { %>
+                <input type="text" name="q" class="form-control border-0 shadow-none bg-transparent px-2"
+                    placeholder="Tìm theo tên máy hoặc cấu hình..."
+                    value="<%= typeof keyword !== 'undefined' ? keyword : '' %>">
+                <% if (typeof keyword !=='undefined' && keyword !=='' ) { %>
                     <a href="/laptop" class="btn border-0 text-danger p-1">
                         <i class="fa-solid fa-times-circle"></i>
                     </a>
-                <% } %>
+                    <% } %>
             </form>
 
-            <% if (typeof user !== 'undefined' && user !== null && user.QuyenHan === 'admin') { %>
-                <button class="btn btn-primary rounded-pill px-4 shadow-sm" data-bs-toggle="modal" data-bs-target="#addLaptopModal">
+            <% if (typeof user !=='undefined' && user !==null && user.QuyenHan==='admin' ) { %>
+                <button class="btn btn-primary rounded-pill px-4 shadow-sm" data-bs-toggle="modal"
+                    data-bs-target="#addLaptopModal">
                     <i class="fa-solid fa-plus me-1"></i> Thêm mới
                 </button>
-            <% } %>
+                <% } %>
         </div>
-        
+
         <div class="table-responsive">
             <table class="table table-hover table-borderless align-middle">
                 <thead class="table-light">
@@ -82,84 +93,95 @@
                         <th>ID</th>
                         <th>Sản phẩm</th>
                         <th>Thương hiệu</th>
-                        
-                        <% if (typeof user !== 'undefined' && user !== null && user.QuyenHan === 'admin') { %>
-                            <th>Giá nhập</th>
-                        <% } %>
 
-                        <th>Giá bán</th>
-                        <th>Kho</th>
-                        <th>Trạng thái</th>
-                        <th>Hành động</th>
+                        <% if (typeof user !=='undefined' && user !==null && user.QuyenHan==='admin' ) { %>
+                            <th>Giá nhập</th>
+                            <% } %>
+
+                                <th>Giá bán</th>
+                                <th>Kho</th>
+                                <th>Trạng thái</th>
+                                <th>Hành động</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <% if (typeof user !== 'undefined' && user !== null && user.QuyenHan === 'admin') { %>
+                    <% if (typeof laptops !=='undefined' && laptops.length===0) { %>
                         <tr>
-                            <td colspan="<%= (typeof user !== 'undefined' && user.QuyenHan === 'admin') ? 8 : 7 %>" class="text-center py-5 text-muted">
+                            <td colspan="<%= (typeof user !== 'undefined' && user && user.QuyenHan === 'admin') ? 8 : 7 %>"
+                                class="text-center py-5 text-muted">
                                 <i class="fa-solid fa-box-open fa-3x mb-3 text-secondary opacity-50"></i>
                                 <h5>Không tìm thấy sản phẩm!</h5>
-                                <% if (typeof keyword !== 'undefined' && keyword !== '') { %>
-                                    <p class="mb-0">Không có laptop nào phù hợp với từ khóa "<b><%= keyword %></b>"</p>
-                                <% } else { %>
-                                    <p class="mb-0">Hiện tại kho chưa có sản phẩm nào.</p>
-                                <% } %>
+                                <% if (typeof keyword !=='undefined' && keyword !=='' ) { %>
+                                    <p class="mb-0">Không có laptop nào phù hợp với từ khóa "<b>
+                                            <%= keyword %>
+                                        </b>"</p>
+                                    <% } else { %>
+                                        <p class="mb-0">Hiện tại kho chưa có sản phẩm nào.</p>
+                                        <% } %>
                             </td>
                         </tr>
-                    <% } else { %>
-                        
-                        <% var stt=1; %>
-                        <% laptops.forEach(sp=> { %>
-                            <tr>
-                                <td>#LAP<%= sp._id.toString().slice(-4).toUpperCase() %></td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <img src="<%= sp.HinhAnh ? sp.HinhAnh : 'https://images.unsplash.com/photo-1603302576837-37561b2e2302?auto=format&fit=crop&w=50&q=80' %>"
-                                            alt="Ảnh sản phẩm" class="product-img me-3 border"
-                                            style="cursor: pointer; transition: transform 0.2s;"
-                                            onmouseover="this.style.transform='scale(1.1)'"
-                                            onmouseout="this.style.transform='scale(1)'"
-                                            onclick="xemAnhPhongTo(this.src)">
-
-                                        <div>
-                                            <h6 class="mb-0 fw-bold"><%= sp.TenLaptop %></h6>
-                                            <small class="text-muted"><%= sp.CauHinh %></small>
+                        <% } else { %>
+                            <% laptops.forEach(sp=> { %>
+                                <tr>
+                                    <td>#LAP<%= sp._id.toString().slice(-4).toUpperCase() %>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <img src="<%= sp.HinhAnh ? sp.HinhAnh : 'https://via.placeholder.com/50' %>"
+                                                alt="Ảnh" class="product-img me-3 border"
+                                                onclick="xemAnhPhongTo(this.src)" style="cursor:pointer">
+                                            <div>
+                                                <h6 class="mb-0 fw-bold">
+                                                    <%= sp.TenLaptop %>
+                                                </h6>
+                                                <small class="text-muted">
+                                                    <%= sp.CauHinh %>
+                                                </small>
+                                            </div>
                                         </div>
-                                    </div>
-                                </td>
-                                <td><%= sp.DanhMuc ? sp.DanhMuc.TenDanhMuc : 'Khác' %></td>
-                                
-                                <% if (typeof user !== 'undefined' && user !== null && user.QuyenHan === 'admin') { %>
-                                    <td><%= sp.GiaNhap.toLocaleString('vi-VN') %> ₫</td>
-                                <% } %>
+                                    </td>
+                                    <td>
+                                        <%= sp.DanhMuc ? sp.DanhMuc.TenDanhMuc : 'Khác' %>
+                                    </td>
 
-                                <td><%= sp.GiaBan.toLocaleString('vi-VN') %> ₫</td>
-                                <td><%= sp.SoLuong %></td>
-                                <td>
-                                    <% if(sp.SoLuong > 5) { %>
-                                        <span class="badge bg-success rounded-pill px-3 py-2">Còn hàng</span>
-                                    <% } else if(sp.SoLuong > 0) { %>
-                                        <span class="badge bg-warning text-dark rounded-pill px-3 py-2">Sắp hết</span>
-                                    <% } else { %>
-                                        <span class="badge bg-danger rounded-pill px-3 py-2">Hết hàng</span>
+                                    <% if (typeof user !=='undefined' && user && user.QuyenHan==='admin' ) { %>
+                                        <td>
+                                            <%= sp.GiaNhap.toLocaleString('vi-VN') %> ₫
+                                        </td>
+                                        <% } %>
+
+                                            <td>
+                                                <%= sp.GiaBan.toLocaleString('vi-VN') %> ₫
+                                            </td>
+                                            <td>
+                                                <%= sp.SoLuong %>
+                                            </td>
+                                            <td>
+                                                <% if(sp.SoLuong> 5) { %> <span
+                                                        class="badge bg-success rounded-pill px-3 py-2">Còn hàng</span>
+                                                    <% } else if(sp.SoLuong> 0) { %> <span
+                                                            class="badge bg-warning text-dark rounded-pill px-3 py-2">Sắp
+                                                            hết</span>
+                                                        <% } else { %> <span
+                                                                class="badge bg-danger rounded-pill px-3 py-2">Hết
+                                                                hàng</span>
+                                                            <% } %>
+                                            </td>
+                                            <td>
+                                                <a href="/laptop/sua/<%= sp._id %>"
+                                                    class="btn btn-sm btn-outline-info action-btn"><i
+                                                        class="fa-solid fa-pen"></i></a>
+                                                <% if (typeof user !=='undefined' && user && user.QuyenHan==='admin' ) {
+                                                    %>
+                                                    <a href="/laptop/xoa/<%= sp._id %>"
+                                                        class="btn btn-sm btn-outline-danger action-btn"
+                                                        onclick="return confirm('Xóa máy này?');"><i
+                                                            class="fa-solid fa-trash"></i></a>
+                                                    <% } %>
+                                            </td>
+                                </tr>
+                                <% }) %>
                                     <% } %>
-                                </td>
-                                <td>
-                                    <a href="/laptop/sua/<%= sp._id %>" class="btn btn-sm btn-outline-info action-btn">
-                                        <i class="fa-solid fa-pen"></i>
-                                    </a>
-                                    
-                                    <% if (typeof user !== 'undefined' && user !== null && user.QuyenHan === 'admin') { %>
-                                        <a href="/laptop/xoa/<%= sp._id %>" class="btn btn-sm btn-outline-danger action-btn"
-                                            onclick="return confirm('Bạn có chắc muốn xóa laptop này?');">
-                                            <i class="fa-solid fa-trash"></i>
-                                        </a>
-                                    <% } %>
-                                </td>
-                            </tr>
-                        <% }) %>
-                    <% } %>
-                
                 </tbody>
             </table>
         </div>
@@ -174,7 +196,7 @@
             </ul>
         </nav>
     </div>
-    
+
     <div class="modal fade" id="imageViewerModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content bg-transparent border-0">
@@ -189,88 +211,89 @@
             </div>
         </div>
     </div>
-    
-<% if (typeof user !== 'undefined' && user !== null && user.QuyenHan === 'admin') { %>
-    <div class="modal fade" id="addLaptopModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
-            <div class="modal-content border-0 shadow">
-                <div class="modal-header bg-primary text-white border-0">
-                    <h5 class="modal-title fw-bold"><i class="fa-solid fa-plus me-2"></i>Thêm Laptop Mới</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
-                </div>
-                <div class="modal-body p-4">
 
-                    <form action="/laptop/them" method="POST">
-                        <div class="row g-3">
-                            <div class="col-md-8">
-                                <label class="form-label fw-semibold">Tên sản phẩm</label>
-                                <input type="text" class="form-control" name="TenLaptop"
-                                    placeholder="VD: Asus ROG Strix G15" required>
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label fw-semibold">Danh mục / Thương hiệu</label>
-                                <select class="form-select" name="DanhMuc" required>
-                                    <option value="" selected disabled>Chọn danh mục...</option>
+    <% if (typeof user !=='undefined' && user !==null && user.QuyenHan==='admin' ) { %>
+        <div class="modal fade" id="addLaptopModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content border-0 shadow">
+                    <div class="modal-header bg-primary text-white border-0">
+                        <h5 class="modal-title fw-bold"><i class="fa-solid fa-plus me-2"></i>Thêm Laptop Mới</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body p-4">
 
-                                    <% if(typeof danhmucList !=='undefined' ) { %>
-                                        <% danhmucList.forEach(dm=> { %>
-                                            <option value="<%= dm._id %>">
-                                                <%= dm.TenDanhMuc %>
-                                            </option>
-                                            <% }) %>
-                                                <% } %>
-                                </select>
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label fw-semibold">Giá nhập (VNĐ)</label>
-                                <input type="number" class="form-control" name="GiaNhap" placeholder="0" required>
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label fw-semibold">Giá bán (VNĐ)</label>
-                                <input type="number" class="form-control" name="GiaBan" placeholder="0" required>
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label fw-semibold">Số lượng kho</label>
-                                <input type="number" class="form-control" name="SoLuong" placeholder="0" required>
-                            </div>
-                            <div class="col-12">
-                                <label class="form-label fw-semibold">Cấu hình tóm tắt</label>
-                                <input type="text" class="form-control" name="CauHinh"
-                                    placeholder="VD: Core i7 12700H, RAM 16GB, SSD 512GB, RTX 3060" required>
-                            </div>
-                            <div class="col-12">
-                                <label class="form-label fw-semibold">URL Hình ảnh</label>
-                                <input type="text" class="form-control" name="HinhAnh"
-                                    placeholder="https://link-anh-san-pham.jpg">
-                            </div>
-                        </div>
+                        <form action="/laptop/them" method="POST">
+                            <div class="row g-3">
+                                <div class="col-md-8">
+                                    <label class="form-label fw-semibold">Tên sản phẩm</label>
+                                    <input type="text" class="form-control" name="TenLaptop"
+                                        placeholder="VD: Asus ROG Strix G15" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-semibold">Danh mục / Thương hiệu</label>
+                                    <select class="form-select" name="DanhMuc" required>
+                                        <option value="" selected disabled>Chọn danh mục...</option>
 
-                        <div class="modal-footer border-0 bg-light mt-4 mx-n4 mb-n4">
-                            <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Hủy</button>
-                            <button type="submit" class="btn btn-primary px-4">Lưu sản phẩm</button>
-                        </div>
-                    </form>
+                                        <% if(typeof danhmucList !=='undefined' ) { %>
+                                            <% danhmucList.forEach(dm=> { %>
+                                                <option value="<%= dm._id %>">
+                                                    <%= dm.TenDanhMuc %>
+                                                </option>
+                                                <% }) %>
+                                                    <% } %>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-semibold">Giá nhập (VNĐ)</label>
+                                    <input type="number" class="form-control" name="GiaNhap" placeholder="0" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-semibold">Giá bán (VNĐ)</label>
+                                    <input type="number" class="form-control" name="GiaBan" placeholder="0" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-semibold">Số lượng kho</label>
+                                    <input type="number" class="form-control" name="SoLuong" placeholder="0" required>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label fw-semibold">Cấu hình tóm tắt</label>
+                                    <input type="text" class="form-control" name="CauHinh"
+                                        placeholder="VD: Core i7 12700H, RAM 16GB, SSD 512GB, RTX 3060" required>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label fw-semibold">URL Hình ảnh</label>
+                                    <input type="text" class="form-control" name="HinhAnh"
+                                        placeholder="https://link-anh-san-pham.jpg">
+                                </div>
+                            </div>
 
+                            <div class="modal-footer border-0 bg-light mt-4 mx-n4 mb-n4">
+                                <button type="button" class="btn btn-secondary px-4"
+                                    data-bs-dismiss="modal">Hủy</button>
+                                <button type="submit" class="btn btn-primary px-4">Lưu sản phẩm</button>
+                            </div>
+                        </form>
+
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-<% } %>
+        <% } %>
 
-    <%- include('footer') %>
+            <%- include('footer') %>
 
-        </div> <%- include('javascript') %>
-            <script>
-                function xemAnhPhongTo(duongDanAnh) {
-                    // 1. Tìm thẻ img trong Modal và gắn đường dẫn ảnh vừa click vào
-                    document.getElementById('enlargedImage').src = duongDanAnh;
+                </div> <%- include('javascript') %>
+                    <script>
+                        function xemAnhPhongTo(duongDanAnh) {
+                            // 1. Tìm thẻ img trong Modal và gắn đường dẫn ảnh vừa click vào
+                            document.getElementById('enlargedImage').src = duongDanAnh;
 
-                    // 2. Gọi Bootstrap hiển thị Modal lên
-                    var modalXemAnh = new bootstrap.Modal(document.getElementById('imageViewerModal'));
-                    modalXemAnh.show();
-                }
-            </script>
-            </body>
+                            // 2. Gọi Bootstrap hiển thị Modal lên
+                            var modalXemAnh = new bootstrap.Modal(document.getElementById('imageViewerModal'));
+                            modalXemAnh.show();
+                        }
+                    </script>
+                    </body>
 
-            </html>
+                    </html>
